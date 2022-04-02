@@ -21,31 +21,31 @@ export default function Index() {
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Base 64 Encoder/Decoder'
-                path='/base64-encoder-decoder'
+                path='/apps/base64-encoder-decoder'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='URL Encoder/Decoder'
-                path='/url-encoder-decoder'
+                path='/apps/url-encoder-decoder'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='MD5 Generator'
-                path='/md5-generator'
+                path='/apps/md5-generator'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='JWT Token Generator'
-                path='/jwt-token-generator'
+                path='/apps/jwt-token-generator'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Encrypted Password Generator'
-                path='/encrypted-password-generator'
+                path='/apps/encrypted-password-generator'
                 isNew
               />
             </div>
@@ -57,35 +57,35 @@ export default function Index() {
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='Meta Tag Generator'
-                  path='/meta-tag-generator'
+                  path='/apps/meta-tag-generator'
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='Open Graph Generator'
-                  path='/open-graph-generator'
+                  path='/apps/open-graph-generator'
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='Twitter Card Generator'
-                  path='/twitter-card-generator'
+                  path='/apps/twitter-card-generator'
                   isNew
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='Sitemap Generator'
-                  path='/sitemap-generator'
+                  path='/apps/sitemap-generator'
                   isNew
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='Robot Text Generator'
-                  path='/robot-text-generator'
+                  path='/apps/robot-text-generator'
                   isNew
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='Manifest.json Generator'
-                  path='/manifest-json-generator'
+                  path='/apps/manifest-json-generator'
                 />
               </div>
               <div className='bg-white rounded-md flex items-center justify-center'>
@@ -99,13 +99,13 @@ export default function Index() {
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Open Graph Checker'
-                path='/open-graph-checker'
+                path='/apps/open-graph-checker'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Meta Analyser'
-                path='/meta-analyser'
+                path='/apps/meta-analyser'
                 isNew
               />
             </div>
@@ -120,34 +120,34 @@ export default function Index() {
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='RGB to Hex'
-                  path='/rgb-to-hex'
+                  path='/apps/rgb-to-hex'
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='Hex to RBG'
-                  path='/hex-to-rgb'
+                  path='/apps/hex-to-rgb'
                   isNew
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='Email Text Extractor'
-                  path='/email-text-extractor'
+                  path='/apps/email-text-extractor'
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='QR Code Generator'
-                  path='/qr-code-generator'
+                  path='/apps/qr-code-generator'
                   isNew
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='What is my IP'
-                  path='/what-is-my-ip'
+                  path='/apps/what-is-my-ip'
                 />
                 <AppIconCard
                   icon={<Ri24HoursFill />}
                   label='What is my Screen Resolution'
-                  path='/what-is-my-screen-resolution'
+                  path='/apps/what-is-my-screen-resolution'
                   isNew
                 />
               </div>
@@ -165,19 +165,19 @@ export default function Index() {
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Text to Binary'
-                path='/text-to-binary'
+                path='/apps/text-to-binary'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Binary to Text'
-                path='/binary-to-text'
+                path='/apps/binary-to-text'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Text to ASCII'
-                path='/text-to-ascii'
+                path='/apps/text-to-ascii'
                 isNew
               />
             </div>
@@ -191,25 +191,25 @@ export default function Index() {
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Age Calculator'
-                path='/age-calculator'
+                path='/apps/age-calculator'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Percentage Calculator'
-                path='/percentage-calculator'
+                path='/apps/percentage-calculator'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Average Calculator'
-                path='/average-calculator'
+                path='/apps/average-calculator'
                 isNew
               />
               <AppIconCard
                 icon={<Ri24HoursFill />}
                 label='Discount Calculator'
-                path='/discount-calculator'
+                path='/apps/discount-calculator'
                 isNew
               />
             </div>

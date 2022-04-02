@@ -2,18 +2,17 @@ import { Form, useActionData } from "@remix-run/react";
 
 export const action = async ({ request }) => {
   let form = await request.formData();
+  let { input, operation } = Object.fromEntries(form);
   const res = {
     body: "",
     errors: [],
   };
-  const input = form.get("input");
-  const operation = form.get("operation");
-  if (input != "" || typeof input !== "undefined") {
+
+  if (!!input) {
     if (operation == "encode") {
       res.body = Buffer.from(input).toString("base64");
     }
     if (operation == "decode") {
-      console.log("lsdjflsdj");
       res.body = Buffer.from(input, "base64").toString("utf-8");
     }
   } else {
