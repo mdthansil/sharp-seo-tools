@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Header */
+.nav-menu > ul > li {
+  @apply leading-[48px];
+}
+.has-child-menu {
+  @apply relative;
+}
+.has-child-menu:hover .child-menu {
+  @apply block;
+}
+.child-menu {
+  @apply absolute bg-white text-primary p-5 rounded-b-md shadow-lg space-y-5 shadow-black/5 min-w-[200px] hidden;
+}
+ul.child-menu > li {
+  @apply leading-none;
+}
+
+/* Sidebar */
+.sidebar-list {
+}
+.sidebar-list > li > a {
+  @apply border-b flex items-center border-gray-100 py-3 px-3 text-sm tracking-wide hover:bg-gray-50;
+}
+.sidebar-list > li:last-child > a {
+  @apply border-b-0 flex;
+}
+
+/* Footer */
+.footer-nav {
+  @apply inline-flex items-center;
+}
+.footer-nav > li {
+  @apply px-5 hover:text-gray-300;
+}
