@@ -12,65 +12,65 @@ export default function Sidebar() {
             <Search />
           </div>
         </div> */}
-        <div className='mt-2'>
-          <div className='w-full rounded-md bg-white h-[250px] flex items-center justify-center'>
+        <div className="mt-2">
+          <div className="w-full rounded-md bg-white h-[250px] flex items-center justify-center">
             Ads
           </div>
         </div>
-        <div className='mt-5'>
-          <h2 className='font-medium text-md'>New Products</h2>
-          <div className='mt-2 bg-white shadow-sm rounded-md overflow-hidden'>
-            <ul className='sidebar-list'>
+        <div className="mt-5">
+          <h2 className="font-medium text-md">New Products</h2>
+          <div className="mt-2 bg-white shadow-sm rounded-md overflow-hidden">
+            <ul className="sidebar-list">
               <li>
-                <SidebarListItem path='/' label='Meta Validator' />
+                <SidebarListItem path="/" label="Meta Validator" />
               </li>
               <li>
-                <SidebarListItem path='/' label='Meta Validator' />
+                <SidebarListItem path="/" label="Meta Validator" />
               </li>
               <li>
-                <SidebarListItem path='/' label='Meta Validator' />
+                <SidebarListItem path="/" label="Meta Validator" />
               </li>
               <li>
-                <SidebarListItem path='/' label='Meta Validator' isNew />
+                <SidebarListItem path="/" label="Meta Validator" isNew />
               </li>
               <li>
-                <SidebarListItem path='/' label='Meta Validator' isNew />
+                <SidebarListItem path="/" label="Meta Validator" isNew />
               </li>
             </ul>
           </div>
         </div>
-        <div className='mt-5'>
-          <div className='w-full rounded-md bg-white h-[250px] flex items-center justify-center'>
+        <div className="mt-5">
+          <div className="w-full rounded-md bg-white h-[250px] flex items-center justify-center">
             Ads
           </div>
         </div>
-        <div className='mt-5'>
-          <h2 className='font-medium text-md'>Poupular Products</h2>
-          <div className='mt-2 bg-white shadow-sm rounded-md overflow-hidden'>
-            <ul className='sidebar-list'>
+        {/* <div className="mt-5">
+          <h2 className="font-medium text-md">Poupular Products</h2>
+          <div className="mt-2 bg-white shadow-sm rounded-md overflow-hidden">
+            <ul className="sidebar-list">
               <li>
-                <SidebarListItem path='/' label='Meta Validator' isNew />
+                <SidebarListItem path="/" label="Meta Validator" isNew />
               </li>
               <li>
-                <SidebarListItem path='/' label='Meta Validator' />
+                <SidebarListItem path="/" label="Meta Validator" />
               </li>
               <li>
-                <SidebarListItem path='/' label='Meta Validator' />
+                <SidebarListItem path="/" label="Meta Validator" />
               </li>
               <li>
-                <SidebarListItem path='/' label='Meta Validator' />
+                <SidebarListItem path="/" label="Meta Validator" />
               </li>
               <li>
-                <SidebarListItem path='/' label='Meta Validator' isNew />
+                <SidebarListItem path="/" label="Meta Validator" isNew />
               </li>
             </ul>
           </div>
-        </div>
-        <div className='mt-5'>
-          <div className='w-full rounded-md bg-white h-[250px] flex items-center justify-center'>
+        </div> */}
+        {/* <div className="mt-5">
+          <div className="w-full rounded-md bg-white h-[250px] flex items-center justify-center">
             Ads
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

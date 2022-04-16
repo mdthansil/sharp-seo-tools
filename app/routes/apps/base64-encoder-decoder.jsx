@@ -1,4 +1,5 @@
 import { Form, useActionData } from "@remix-run/react";
+import forge from "node-forge";
 
 export const action = async ({ request }) => {
   let form = await request.formData();
@@ -10,13 +11,15 @@ export const action = async ({ request }) => {
 
   if (!!input) {
     if (operation == "encode") {
-      res.body = Buffer.from(input).toString("base64");
+      // res.body = Buffer.from(input).toString("base64");
+      res.body = forge.util.encode64(input);
     }
     if (operation == "decode") {
-      res.body = Buffer.from(input, "base64").toString("utf-8");
+      res.body = forge.util.decode64(input);
+      // res.body = Buffer.from(input, "base64").toString("utf-8");
     }
   } else {
-    res.errors.push("Please enter a valid Url");
+    res.errors.push("Please enter a valid text");
   }
   return res;
 };
@@ -24,6 +27,9 @@ export const action = async ({ request }) => {
 export const meta = () => {
   return {
     title: "Base64 Encoder/Decoder - Sharp Seo Tools",
+    description:
+      "Base64 Encoder/Decoder is an online tool for encoding or decoding text.",
+    keywords: "cryptography, hashing, encode, decode, base64",
   };
 };
 
@@ -32,75 +38,75 @@ export default function Base64EncoderDecoder() {
 
   return (
     <>
-      <div className='text-center px-4 mt-12 mb-8 flex flex-col items-center justify-center'>
-        <h2 className='font-bold text-2xl tracking-wide'>
+      <div className="text-center px-4 mt-12 mb-8 flex flex-col items-center justify-center">
+        <h2 className="font-bold text-2xl tracking-wide">
           Online Base64 Encoder/Decoder
         </h2>
-        <p className='text-sm text-gray-500 tracking-wide mt-2 max-w-xl'>
+        <p className="text-sm text-gray-500 tracking-wide mt-2 max-w-xl">
           Whether you want to encode or decode your string to Base64, You can
           simply enter text in to text box and click relevant button either
           "Encode" or "Decode"
         </p>
       </div>
-      <section className='bg-white rounded-md p-4'>
-        <Form method='post'>
-          <div className='grid grid-cols-2 gap-3'>
+      <section className="bg-white rounded-md p-4">
+        <Form method="post">
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label
-                htmlFor='input'
-                className='font-medium mb-3 block text- text-base'>
+                htmlFor="input"
+                className="font-medium mb-3 block text- text-base">
                 Enter Text to Encode or Decode
               </label>
               <textarea
-                id='input'
-                name='input'
-                placeholder='Write here...'
-                className='w-full border border-gray-200 p-2 rounded-md resize-none text-base outline-none'
+                id="input"
+                name="input"
+                placeholder="Write here..."
+                className="w-full border border-gray-200 p-2 rounded-md resize-none text-base outline-none"
                 rows={5}></textarea>
             </div>
             <div>
               <label
-                htmlFor='output'
-                className='font-medium mb-3 block text-base'>
+                htmlFor="output"
+                className="font-medium mb-3 block text-base">
                 Encoded/Decoded Output
               </label>
               <textarea
-                id='output'
+                id="output"
                 readOnly
-                placeholder='Output'
-                className='w-full border border-gray-200 p-2 rounded-md resize-none text-base outline-none'
+                placeholder="Output"
+                className="w-full border border-gray-200 p-2 rounded-md resize-none text-base outline-none"
                 rows={5}
                 value={data?.body}></textarea>
             </div>
           </div>
-          <div className='flex justify-center space-x-3 mt-5'>
+          <div className="flex justify-center space-x-3 mt-5">
             <button
-              type='submit'
-              value='encode'
-              name='operation'
-              className='bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90'>
+              type="submit"
+              value="encode"
+              name="operation"
+              className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
               Encode
             </button>
             <button
-              type='submit'
-              name='operation'
-              value='decode'
-              className='bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90'>
+              type="submit"
+              name="operation"
+              value="decode"
+              className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
               Decode
             </button>
           </div>
         </Form>
       </section>
-      <section className='bg-white rounded-md p-4 mt-5'>
-        <h2 className='font-semibold mb-3 text-xl border-b border-gray-100 pb-3'>
+      <section className="bg-white rounded-md p-4 mt-5">
+        <h2 className="font-semibold mb-3 text-xl border-b border-gray-100 pb-3">
           About Online Base64 Encoder/Decoder
         </h2>
-        <div className='text-base text-gray-500 font-light'>
+        <div className="text-base text-gray-500 font-light">
           <p>
             Sharp SEO Tools bring you the smartest and fastest online Base64
             Encoder/Decoder tool for free!
           </p>
-          <p className='mt-1'>
+          <p className="mt-1">
             This online Base64 Encoder/Decoder tool is extremely helpful to
             encode a string to base64 or decode a string to human readable
             format. Base64 encoding schemes are commonly used when there is a

@@ -470,6 +470,15 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-backdrop-sepia:  ;
 }
 
+.fixed{
+  position: fixed;
+}
+
+.sticky{
+  position: -webkit-sticky;
+  position: sticky;
+}
+
 .col-span-3{
   grid-column: span 3 / span 3;
 }
@@ -489,6 +498,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .mr-0{
   margin-right: 0px;
+}
+
+.mt-5{
+  margin-top: 1.25rem;
 }
 
 .mt-6{
@@ -521,10 +534,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .mt-16{
   margin-top: 4rem;
-}
-
-.mt-5{
-  margin-top: 1.25rem;
 }
 
 .mb-3{
@@ -563,6 +572,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 2.75rem;
 }
 
+.h-\[250px\]{
+  height: 250px;
+}
+
 .h-28{
   height: 7rem;
 }
@@ -573,10 +586,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .h-full{
   height: 100%;
-}
-
-.h-\[250px\]{
-  height: 250px;
 }
 
 .max-h-10{
@@ -605,6 +614,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .flex-shrink-0{
   flex-shrink: 0;
+}
+
+.transform{
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .resize-none{
@@ -665,16 +678,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
-.space-x-2 > :not([hidden]) ~ :not([hidden]){
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
 .space-x-5 > :not([hidden]) ~ :not([hidden]){
   --tw-space-x-reverse: 0;
   margin-right: calc(1.25rem * var(--tw-space-x-reverse));
   margin-left: calc(1.25rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-x-2 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .self-center{

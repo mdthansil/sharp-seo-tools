@@ -1,47 +1,44 @@
 import { Form, useActionData } from "@remix-run/react";
+import forge from "node-forge";
+
 export const action = async ({ request }) => {
   let form = await request.formData();
-  let { url, operation } = Object.fromEntries(form);
+  let { input } = Object.fromEntries(form);
   const res = {
     body: "",
     errors: [],
   };
 
-  if (url != "" || typeof url !== "undefined") {
-    if (operation == "encode") {
-      res.body = encodeURIComponent(url);
-    }
-    if (operation == "decode") {
-      res.body = decodeURIComponent(url);
-    }
+  if (typeof input !== "undefined") {
+    const hash = forge.md.sha256.create();
+    hash.update(input);
+    res.body = hash.digest().toHex();
   } else {
-    res.errors.push("Please enter a valid Url");
+    res.errors.push("Please enter a valid text");
   }
   return res;
 };
 
 export const meta = () => {
   return {
-    title: "URL Encoder/Decoder - Sharp Seo Tools",
-    description:
-      "URL Encoder/Decoder is a free online tool to encode or decode url online",
-    keywords: "cryptography, hashing, encode, decode, URL, URL Encode,",
+    title: "SHA256 Hash Generator - Sharp Seo Tools",
+    description: "Free SHA256 hash generator tool which generate SHA256 hashes",
+    keywords: "cryptography, hashing, encoding, cryptography, SHA256",
   };
 };
 
-export default function UrlEncoderDecoder() {
+export default function SHA256HashGenerator() {
   const data = useActionData();
 
   return (
     <>
       <div className="text-center px-4 mt-12 mb-8 flex flex-col items-center justify-center">
         <h2 className="font-bold text-2xl tracking-wide">
-          Online URL Encoder/Decoder
+          Online SHA256 Hash Generator
         </h2>
         <p className="text-sm text-gray-500 tracking-wide mt-2 max-w-xl">
-          Whether you want to encode or decode your URL, You can simply enter
-          URL in to text box and click relevant button either "Encode" or
-          "Decode"
+          Whether you want to generate SHA256 hash from text, You can simply
+          enter text in to text box and click the generate button.
         </p>
       </div>
       <section className="bg-white rounded-md p-4">
@@ -51,7 +48,7 @@ export default function UrlEncoderDecoder() {
               <label
                 htmlFor="input"
                 className="font-medium mb-3 block text- text-base">
-                Enter URL/Text to Encode or Decode
+                Enter Text to generate SHA256 Hash
               </label>
               <textarea
                 id="input"
@@ -64,11 +61,11 @@ export default function UrlEncoderDecoder() {
               <label
                 htmlFor="output"
                 className="font-medium mb-3 block text-base">
-                Encoded/Decoded Output
+                Hash Output
               </label>
               <textarea
-                readOnly
                 id="output"
+                readOnly
                 placeholder="Output"
                 className="w-full border border-gray-200 p-2 rounded-md resize-none text-base outline-none"
                 rows={5}
@@ -78,36 +75,30 @@ export default function UrlEncoderDecoder() {
           <div className="flex justify-center space-x-3 mt-5">
             <button
               type="submit"
-              value="encode"
-              name="operation"
               className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
-              Encode
-            </button>
-            <button
-              type="submit"
-              name="operation"
-              value="decode"
-              className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
-              Decode
+              Generate SHA256 hash
             </button>
           </div>
         </Form>
       </section>
       <section className="bg-white rounded-md p-4 mt-5">
         <h2 className="font-semibold mb-3 text-xl border-b border-gray-100 pb-3">
-          About Online URL Encoder/Decoder
+          About Online SHA256 Hash Generator
         </h2>
         <div className="text-base text-gray-500 font-light">
           <p>
-            Sharp SEO Tools bring you the smartest and fastest online URL
-            Encoder/Decoder tool for free!
+            Sharp SEO Tools bring you the smartest and fastest online SHA256
+            Generator tool for free!
           </p>
           <p className="mt-1">
-            This online URL Encoder/Decoder tool is extremely helpful when
-            adding special characters to a URL parameter which is also known
-            often referred to as percent encoding. The process of URL encoding
-            involves replacement of unallowable characters with a % (percent
-            sign) and additional two hexadecimal values.
+            This online SHA256 Hash Generator tool is extremely helpful to
+            Generate SHA256 Hashes. SHA256 hashing mechanism commonly used for
+            most popular authentication and encryption protocols like SSL, TLS,
+            IPsec, SSH, and PGP. In Unix and Linux, SHA-256 is used for secure
+            password hashing. Cryptocurrencies such as Bitcoin use SHA-256 for
+            verifying transactions. <br /> The SHA256 hash non-revisable means
+            once you created a SHA256 hash which cannot transform in to actual
+            form.
           </p>
         </div>
       </section>
