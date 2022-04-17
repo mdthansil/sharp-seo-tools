@@ -470,15 +470,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-backdrop-sepia:  ;
 }
 
-.fixed{
-  position: fixed;
-}
-
-.sticky{
-  position: -webkit-sticky;
-  position: sticky;
-}
-
 .col-span-3{
   grid-column: span 3 / span 3;
 }
@@ -542,6 +533,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .mt-1{
   margin-top: 0.25rem;
+}
+
+.mt-4{
+  margin-top: 1rem;
 }
 
 .block{
@@ -640,8 +635,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.grid-cols-6{
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
 .flex-col{
   flex-direction: column;
+}
+
+.flex-wrap{
+  flex-wrap: wrap;
 }
 
 .items-center{
@@ -688,6 +691,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-space-x-reverse: 0;
   margin-right: calc(0.5rem * var(--tw-space-x-reverse));
   margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-x-1 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.25rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .self-center{
@@ -765,6 +774,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-primary{
   --tw-bg-opacity: 1;
   background-color: rgb(22 24 83 / var(--tw-bg-opacity));
+}
+
+.bg-gray-50{
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
 .p-4{
@@ -885,6 +899,18 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .font-light{
   font-weight: 300;
+}
+
+.uppercase{
+  text-transform: uppercase;
+}
+
+.lowercase{
+  text-transform: lowercase;
+}
+
+.capitalize{
+  text-transform: capitalize;
 }
 
 .tracking-wide{
