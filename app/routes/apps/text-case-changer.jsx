@@ -137,7 +137,6 @@ export default function TextCaseChanger() {
               <input type="radio" name="caseType" value="snakeCase" />
               <span>snake_case</span>
             </label>
-
             <label className="flex space-x-1 items-center">
               <input type="radio" name="caseType" value="slugCase" />
               <span>slug-case</span>
