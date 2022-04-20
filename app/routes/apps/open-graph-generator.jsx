@@ -1,4 +1,5 @@
 import { Form, useActionData } from "@remix-run/react";
+import { Fragment, useEffect, useState } from "react";
 import caseChanger from "underscore.string";
 
 export const action = async ({ request }) => {
@@ -27,8 +28,42 @@ export const meta = () => {
   };
 };
 
+const initialValues = {
+  siteTitle: "",
+  siteName: "",
+  siteUrl: "",
+  siteDescription: "",
+  type: "article",
+  images: {},
+};
+
 export default function TextCaseChanger() {
   const data = useActionData();
+
+  const [values, setValues] = useState(initialValues);
+  const [imagesCount, setImagesCount] = useState(1);
+
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const handleImagesCount = (e) => {
+    setImagesCount(e.target.value);
+  };
+
+  const handleImages = (e) => {
+    setValues({
+      ...values,
+      images: {
+        ...values.images,
+        [e.target.getAttribute("data-name")]: e.target.value,
+      },
+    });
+  };
+
+  useEffect(() => {
+    console.log(values);
+  }, [values]);
 
   return (
     <>
@@ -43,7 +78,7 @@ export default function TextCaseChanger() {
         </p>
       </div>
       <section className="bg-white rounded-md p-4">
-        <Form method="post">
+        <Form method="post" autoComplete="off">
           <div className="grid grid-cols-2 gap-5">
             <div>
               <div>
@@ -56,6 +91,7 @@ export default function TextCaseChanger() {
                   id="siteTitle"
                   name="siteTitle"
                   placeholder="Website Title"
+                  onChange={handleChange}
                   className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"></input>
               </div>
               <div className="mt-4">
@@ -68,6 +104,7 @@ export default function TextCaseChanger() {
                   id="siteName"
                   name="siteName"
                   placeholder="Website Name"
+                  onChange={handleChange}
                   className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"></input>
               </div>
               <div className="mt-4">
@@ -80,6 +117,7 @@ export default function TextCaseChanger() {
                   id="siteUrl"
                   name="siteUrl"
                   placeholder="Website URL"
+                  onChange={handleChange}
                   className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"></input>
               </div>
             </div>
@@ -94,6 +132,7 @@ export default function TextCaseChanger() {
                   id="siteDescription"
                   name="siteDescription"
                   placeholder="Website Description"
+                  onChange={handleChange}
                   className="w-full flex-grow self-stretch border border-gray-200 p-2 rounded-md resize-none text-base outline-none"
                   maxLength={200}></textarea>
               </div>
@@ -110,6 +149,7 @@ export default function TextCaseChanger() {
               <select
                 id="type"
                 name="type"
+                onChange={handleChange}
                 className="w-full border border-gray-200 p-2 rounded-md text-base outline-none after:w-10">
                 <option value="article">Article</option>
                 <option value="book">Book</option>
@@ -153,6 +193,7 @@ export default function TextCaseChanger() {
               <select
                 id="imagesCount"
                 name="imagesCount"
+                onChange={handleImagesCount}
                 className="w-full border border-gray-200 p-2 rounded-md text-base outline-none after:w-10">
                 {Array(10)
                   .fill("")
@@ -167,14 +208,62 @@ export default function TextCaseChanger() {
             </div>
           </div>
 
+          <div>
+            <div className="mt-4">
+              {Array(parseInt(imagesCount))
+                .fill("")
+                .map((_, index) => {
+                  return (
+                    <label
+                      key={index}
+                      className="font-medium mb-3 block text- text-base">
+                      Image URL {index + 1}
+                      <input
+                        name="imageUrl"
+                        onChange={handleImages}
+                        data-name={`imageUrl${index + 1}`}
+                        placeholder="Image URL"
+                        className="w-full border mt-4 border-gray-200 p-2 rounded-md text-base outline-none"></input>
+                    </label>
+                  );
+                })}
+            </div>
+          </div>
+
           <div className="flex justify-center space-x-3 mt-5">
-            <button
+            {/* <button
               type="submit"
               className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
               Generate Open Graph Tags
-            </button>
+            </button> */}
           </div>
         </Form>
+      </section>
+      <section className="bg-white rounded-md p-4 mt-5">
+        <h2 className="font-semibold mb-3 text-xl border-b border-gray-100 pb-3">
+          Result
+        </h2>
+        <div className="text-base text-gray-500 font-mono">
+          &lt;meta property="og:title" content="{values.siteTitle}"&gt;
+          <br />
+          &lt;meta property="og:site_name" content="{values.siteName}"&gt;
+          <br />
+          &lt;meta property="og:url" content="{values.siteUrl}"&gt;
+          <br />
+          &lt;meta property="og:description" content="{values.siteDescription}"
+          &gt;
+          <br />
+          &lt;meta property="og:type" content="{values.type}"&gt;
+          <br />
+          {Object.values(values.images).map((url, index) => {
+            return (
+              <Fragment key={index}>
+                &lt;meta property="og:image" content="{url}"&gt;
+                <br />
+              </Fragment>
+            );
+          })}
+        </div>
       </section>
       <section className="bg-white rounded-md p-4 mt-5">
         <h2 className="font-semibold mb-3 text-xl border-b border-gray-100 pb-3">
