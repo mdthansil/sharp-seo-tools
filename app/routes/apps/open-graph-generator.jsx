@@ -1,22 +1,6 @@
 import { Form, useActionData } from "@remix-run/react";
 import { Fragment, useEffect, useState } from "react";
-import caseChanger from "underscore.string";
-
-export const action = async ({ request }) => {
-  let form = await request.formData();
-  let { input, caseType } = Object.fromEntries(form);
-
-  const res = {
-    body: "",
-    errors: [],
-  };
-
-  if (input) {
-  } else {
-    res.errors.push("Please enter a valid text");
-  }
-  return res;
-};
+import copy from "copy-to-clipboard";
 
 export const meta = () => {
   return {
@@ -34,31 +18,45 @@ const initialValues = {
   siteUrl: "",
   siteDescription: "",
   type: "article",
-  images: {},
+  images: [""],
 };
 
 export default function TextCaseChanger() {
   const data = useActionData();
 
   const [values, setValues] = useState(initialValues);
-  const [imagesCount, setImagesCount] = useState(1);
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   const handleImagesCount = (e) => {
-    setImagesCount(e.target.value);
+    const currentImageCount = values.images.length;
+    const newImagesCount = e.target.value;
+
+    if (currentImageCount < newImagesCount) {
+      const _prevElements = values.images;
+      const _newElements = Array(
+        parseInt(newImagesCount - currentImageCount)
+      ).fill("");
+      setValues({ ...values, images: _prevElements.concat(_newElements) });
+    }
+    if (currentImageCount > newImagesCount) {
+      const _prevElements = values.images;
+      _prevElements.splice(currentImageCount - newImagesCount);
+      setValues({
+        ...values,
+        images: _prevElements,
+      });
+    }
   };
 
   const handleImages = (e) => {
-    setValues({
-      ...values,
-      images: {
-        ...values.images,
-        [e.target.getAttribute("data-name")]: e.target.value,
-      },
-    });
+    const imageUrl = e.target.value;
+    const index = e.target.getAttribute("data-index");
+    const _newElements = values.images;
+    _newElements[index] = imageUrl;
+    setValues({ ...values, images: _newElements });
   };
 
   useEffect(() => {
@@ -78,13 +76,13 @@ export default function TextCaseChanger() {
         </p>
       </div>
       <section className="bg-white rounded-md p-4">
-        <Form method="post" autoComplete="off">
+        <Form method="post" autoComplete="off" onSubmit={() => false}>
           <div className="grid grid-cols-2 gap-5">
             <div>
               <div>
                 <label
                   htmlFor="siteTitle"
-                  className="font-medium mb-3 block text- text-base">
+                  className="font-medium mb-3 block text-base">
                   Site Title
                 </label>
                 <input
@@ -97,7 +95,7 @@ export default function TextCaseChanger() {
               <div className="mt-4">
                 <label
                   htmlFor="siteName"
-                  className="font-medium mb-3 block text- text-base">
+                  className="font-medium mb-3 block text-base">
                   Site Name
                 </label>
                 <input
@@ -110,7 +108,7 @@ export default function TextCaseChanger() {
               <div className="mt-4">
                 <label
                   htmlFor="siteUrl"
-                  className="font-medium mb-3 block text- text-base">
+                  className="font-medium mb-3 block text-base">
                   Site URL
                 </label>
                 <input
@@ -125,7 +123,7 @@ export default function TextCaseChanger() {
               <div className="h-full flex flex-col">
                 <label
                   htmlFor="siteDescription"
-                  className="font-medium mb-3 block text- text-base">
+                  className="font-medium mb-3 block text-base">
                   Description
                 </label>
                 <textarea
@@ -143,7 +141,7 @@ export default function TextCaseChanger() {
             <div className="mt-4">
               <label
                 htmlFor="type"
-                className="font-medium mb-3 block text- text-base">
+                className="font-medium mb-3 block text-base">
                 Type
               </label>
               <select
@@ -187,7 +185,7 @@ export default function TextCaseChanger() {
             <div className="mt-4">
               <label
                 htmlFor="imagesCount"
-                className="font-medium mb-3 block text- text-base">
+                className="font-medium mb-3 block text-base">
                 Number Of Images
               </label>
               <select
@@ -210,18 +208,18 @@ export default function TextCaseChanger() {
 
           <div>
             <div className="mt-4">
-              {Array(parseInt(imagesCount))
+              {Array(parseInt(values.images.length))
                 .fill("")
                 .map((_, index) => {
                   return (
                     <label
                       key={index}
-                      className="font-medium mb-3 block text- text-base">
+                      className="font-medium mb-3 block text-base">
                       Image URL {index + 1}
                       <input
                         name="imageUrl"
                         onChange={handleImages}
-                        data-name={`imageUrl${index + 1}`}
+                        data-index={index}
                         placeholder="Image URL"
                         className="w-full border mt-4 border-gray-200 p-2 rounded-md text-base outline-none"></input>
                     </label>
@@ -243,6 +241,7 @@ export default function TextCaseChanger() {
         <h2 className="font-semibold mb-3 text-xl border-b border-gray-100 pb-3">
           Result
         </h2>
+
         <div className="text-base text-gray-500 font-mono">
           &lt;meta property="og:title" content="{values.siteTitle}"&gt;
           <br />
@@ -255,10 +254,10 @@ export default function TextCaseChanger() {
           <br />
           &lt;meta property="og:type" content="{values.type}"&gt;
           <br />
-          {Object.values(values.images).map((url, index) => {
+          {values.images.map((image, index) => {
             return (
-              <Fragment key={index}>
-                &lt;meta property="og:image" content="{url}"&gt;
+              <Fragment key={index + Date.now()}>
+                &lt;meta property="og:image" content="{image}"&gt;
                 <br />
               </Fragment>
             );
