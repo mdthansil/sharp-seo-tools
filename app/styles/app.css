@@ -539,6 +539,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-top: 1rem;
 }
 
+.mb-5{
+  margin-bottom: 1.25rem;
+}
+
 .block{
   display: block;
 }
@@ -756,6 +760,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   border-color: rgb(243 244 246 / var(--tw-border-opacity));
 }
 
+.border-primary\/80{
+  border-color: rgb(22 24 83 / 0.8);
+}
+
 .bg-gray-200{
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
@@ -950,6 +958,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(22 24 83 / var(--tw-text-opacity));
 }
 
+.text-primary\/80{
+  color: rgb(22 24 83 / 0.8);
+}
+
 .shadow-sm{
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
@@ -1102,6 +1114,11 @@ ul.child-menu > li{
 .hover\:bg-primary:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(22 24 83 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-gray-100:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-opacity-90:hover{
