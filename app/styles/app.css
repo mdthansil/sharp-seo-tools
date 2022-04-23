@@ -711,6 +711,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
+.space-x-4 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
 .self-center{
   align-self: center;
 }
@@ -737,6 +743,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .border-b{
   border-bottom-width: 1px;
+}
+
+.border-t{
+  border-top-width: 1px;
 }
 
 .border-gray-300{
@@ -861,6 +871,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .pb-3{
   padding-bottom: 0.75rem;
+}
+
+.pt-3{
+  padding-top: 0.75rem;
 }
 
 .text-center{

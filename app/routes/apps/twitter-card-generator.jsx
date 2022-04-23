@@ -38,8 +38,14 @@ export default function TwitterCardGenerator() {
   const handleCopy = () => {
     let textToCopy = `
     <meta property="twitter:card" content="${values.cardType}">
-    <meta property="twitter:site" content="${values.siteUsername}">
-    <meta property="twitter:creator" content="${values.creatorUsername}">
+    <meta property="twitter:site" content="@${values.siteUsername.replace(
+      /@/gi,
+      ""
+    )}">
+    <meta property="twitter:creator" content="@${values.creatorUsername.replace(
+      /@/gi,
+      ""
+    )}">
     <meta property="twitter:title" content="${values.siteTitle}">
     <meta property="twitter:description" content="${values.siteDescription}" >
     <meta property="twitter:image" content="${values.imageUrl}">
@@ -47,7 +53,9 @@ export default function TwitterCardGenerator() {
     <meta property="twitter:app:country" content="${values.appCountry}">
     <meta property="twitter:app:id:iphone" content="${values.iPhoneAppId}">
     <meta property="twitter:app:id:ipad" content="${values.iPadAppId}">
-    <meta property="twitter:app:id:googleplay" content="${values.googlePlayAppId}">
+    <meta property="twitter:app:id:googleplay" content="${
+      values.googlePlayAppId
+    }">
     `;
 
     if (copy(textToCopy)) {
@@ -255,9 +263,11 @@ export default function TwitterCardGenerator() {
         <div className="text-base text-gray-500 font-mono">
           &lt;meta property="twitter:card" content="{values.cardType}"&gt;
           <br />
-          &lt;meta property="twitter:site" content="{values.siteUsername}"&gt;
+          &lt;meta property="twitter:site" content="@
+          {values.siteUsername.replace(/@/gi, "")}"&gt;
           <br />
-          &lt;meta property="twitter:creator" content="{values.creatorUsername}
+          &lt;meta property="twitter:creator" content="@
+          {values.creatorUsername.replace(/@/gi, "")}
           "&gt;
           <br />
           &lt;meta property="twitter:title" content="{values.siteTitle}"&gt;
