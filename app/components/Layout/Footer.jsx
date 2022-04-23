@@ -1,10 +1,11 @@
 import { Link } from "@remix-run/react";
 
+const year = new Date().getFullYear();
 export default function Footer() {
   return (
-    <div className='bg-primary mt-16 text-white'>
-      <div className='text-center border-b border-gray-500/20 py-5 text-sm tracking-wide'>
-        <ul className='footer-nav'>
+    <div className="bg-primary mt-16 text-white">
+      <div className="text-center border-b border-gray-500/20 py-5 text-sm tracking-wide">
+        <ul className="footer-nav">
           <li>
             <Link to={"/"}>Home</Link>
           </li>
@@ -22,8 +23,10 @@ export default function Footer() {
           </li>
         </ul>
       </div>
-      <div className='text-center py-3 text-sm tracking-wide'>
-        <p>&copy; 2022 Sharp Seo Tools</p>
+      <div className="text-center py-3 text-sm tracking-wide">
+        <p>
+          &copy; {year == "2020" ? `2022` : `2022 - ${year}`} Sharp Seo Tools
+        </p>
       </div>
     </div>
   );

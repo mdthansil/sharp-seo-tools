@@ -23,7 +23,7 @@ const initialValues = {
   images: [""],
 };
 
-export default function TextCaseChanger() {
+export default function OpenGraphGenerator() {
   const [values, setValues] = useState(initialValues);
 
   const handleChange = (e) => {
