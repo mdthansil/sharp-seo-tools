@@ -245,20 +245,14 @@ export default function OpenGraphGenerator() {
             </div>
           </div>
 
-          <div className="flex justify-center space-x-3 mt-5">
-            {/* <button
-              type="submit"
-              className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
-              Generate Open Graph Tags
-            </button> */}
-          </div>
+          <div className="flex justify-center space-x-3 mt-5"></div>
         </Form>
       </section>
       <section className="bg-white rounded-md p-4 mt-5">
         <div className="mb-3 border-b border-gray-100 flex justify-between items-center pb-3">
           <h2 className="font-semibold text-xl">Results</h2>
           <button
-            className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2"
+            className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
             onClick={handleCopy}>
             <RiFileCopyLine /> <span>Copy</span>
           </button>

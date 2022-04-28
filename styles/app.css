@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global */
+
 /* Header */
 .nav-menu > ul > li {
   @apply leading-[48px];
@@ -37,3 +39,14 @@ ul.child-menu > li {
 .footer-nav > li {
   @apply px-5 hover:text-gray-300;
 }
+
+/* select {
+  appearance: none;
+}
+select::after {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #000;
+} */

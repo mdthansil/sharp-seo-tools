@@ -3,7 +3,7 @@ import Sidebar from "~/components/Layout/Sidebar";
 export default function Apps() {
   return (
     <>
-      <div className="grid grid-cols-4 gap-5 mx-auto max-w-7xl ">
+      <div className="grid grid-cols-4 gap-5 mx-auto max-w-6xl ">
         <div className="col-span-3">
           <Outlet />
           {/* <div className="grid grid-cols-3 space-x-5">

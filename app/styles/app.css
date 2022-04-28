@@ -470,6 +470,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-backdrop-sepia:  ;
 }
 
+.relative{
+  position: relative;
+}
+
 .col-span-3{
   grid-column: span 3 / span 3;
 }
@@ -535,12 +539,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-top: 0.25rem;
 }
 
+.mb-5{
+  margin-bottom: 1.25rem;
+}
+
 .mt-4{
   margin-top: 1rem;
 }
 
-.mb-5{
-  margin-bottom: 1.25rem;
+.mt-7{
+  margin-top: 1.75rem;
 }
 
 .mt-3{
@@ -553,10 +561,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .flex{
   display: flex;
-}
-
-.table{
-  display: table;
 }
 
 .grid{
@@ -611,6 +615,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 2.75rem;
 }
 
+.max-w-6xl{
+  max-width: 72rem;
+}
+
 .max-w-7xl{
   max-width: 80rem;
 }
@@ -649,6 +657,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .grid-cols-5{
   grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.grid-cols-1{
+  grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
 .grid-cols-6{
@@ -705,16 +717,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
-.space-x-1 > :not([hidden]) ~ :not([hidden]){
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.25rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
 .space-x-4 > :not([hidden]) ~ :not([hidden]){
   --tw-space-x-reverse: 0;
   margin-right: calc(1rem * var(--tw-space-x-reverse));
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-x-1 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.25rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .self-center{
@@ -743,10 +755,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .border-b{
   border-bottom-width: 1px;
-}
-
-.border-t{
-  border-top-width: 1px;
 }
 
 .border-gray-300{
@@ -817,6 +825,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .p-2{
   padding: 0.5rem;
+}
+
+.p-8{
+  padding: 2rem;
 }
 
 .px-2{
@@ -951,6 +963,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   text-transform: capitalize;
 }
 
+.italic{
+  font-style: italic;
+}
+
 .tracking-wide{
   letter-spacing: 0.025em;
 }
@@ -984,6 +1000,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(22 24 83 / 0.8);
 }
 
+.text-red-500{
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
+.text-green-500{
+  --tw-text-opacity: 1;
+  color: rgb(34 197 94 / var(--tw-text-opacity));
+}
+
 .shadow-sm{
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
@@ -994,6 +1020,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+
+.transition{
+  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Global */
 
 /* Header */
 
@@ -1087,6 +1123,17 @@ ul.child-menu > li{
   color: rgb(209 213 219 / var(--tw-text-opacity));
 }
 
+/* select {
+  appearance: none;
+}
+select::after {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #000;
+} */
+
 .before\:mr-2::before{
   content: var(--tw-content);
   margin-right: 0.5rem;
@@ -1102,9 +1149,9 @@ ul.child-menu > li{
   width: 15px;
 }
 
-.before\:bg-\[url\(\'\/images\/angle_arrow_right\.svg\'\)\]::before{
+.before\:bg-\[url\(\'\/images\/angle_right\.svg\'\)\]::before{
   content: var(--tw-content);
-  background-image: url('/images/angle_arrow_right.svg');
+  background-image: url('/images/angle_right.svg');
 }
 
 .before\:bg-\[length\:15px_15px\]::before{

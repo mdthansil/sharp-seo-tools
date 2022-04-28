@@ -6,7 +6,9 @@ export default function Layout() {
   return (
     <>
       <Header />
-      <Outlet />
+      <div className="px-4">
+        <Outlet />
+      </div>
       <Footer />
       <Toaster position="top-center" />
     </>
