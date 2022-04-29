@@ -1,5 +1,5 @@
 import { Form, useActionData, useTransition } from "@remix-run/react";
-import { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   RiAddCircleFill,
   RiFileCopyLine,
@@ -19,7 +19,7 @@ export const meta = () => {
 };
 
 const initialValues = {
-  default: "Allow: /",
+  defaultValue: "Allow: /",
   crawlDelay: "",
   sitemap: "",
   google: "",
@@ -74,32 +74,78 @@ export default function RobotsTextGenerator() {
   };
 
   const handleCopy = () => {
-    // let textToCopy = `
-    // <meta property="og:title" content="${values.siteTitle}">
-    // <meta property="og:site_name" content="${values.siteName}">
-    // <meta property="og:url" content="${values.siteUrl}">
-    // <meta property="og:description" content="${values.siteDescription}" >
-    // <meta property="og:type" content="${values.type}">
-    // `;
-    // let images = values.images.map(
-    //   (image) => `    <meta property="og:image" content="${image}">`
-    // );
-    // textToCopy += images.join("\n");
-    // if (copy(textToCopy)) {
-    //   toast.success("Text Copied.");
-    // }
+    let textToCopy = "hellow owrld";
+
+    textToCopy += actionData?.google
+      ? `User-agent:Googlebot\n${actionData?.google}\n`
+      : "";
+    textToCopy += actionData?.googleImage
+      ? `User-agent:googlebot-image\n${actionData?.googleImage}\n`
+      : "";
+    textToCopy += actionData?.googleMobile
+      ? `User-agent:googlebot-mobile\n${actionData?.googleMobile}\n`
+      : "";
+    textToCopy += actionData?.msnSearch
+      ? `User-agent:MSNBot\n${actionData?.msnSearch}\n`
+      : "";
+    textToCopy += actionData?.yahoo
+      ? `User-agent:Slurp\n${actionData?.yahoo}\n`
+      : "";
+    textToCopy += actionData?.yahooMm
+      ? `User-agent:yahoo-mmcrawler\n${actionData?.yahooMm}\n`
+      : "";
+    textToCopy += actionData?.yahooBlogs
+      ? `User-agent:yahoo-blogs/v3.9\n${actionData?.yahooBlogs}\n`
+      : "";
+    textToCopy += actionData?.ask
+      ? `User-agent:Teoma\n${actionData?.ask}\n`
+      : "";
+    textToCopy += actionData?.gigaBlast
+      ? `User-agent:Gigabot\n${actionData?.gigaBlast}\n`
+      : "";
+    textToCopy += actionData?.dmozChecker
+      ? `User-agent:Robozilla\n${actionData?.dmozChecker}\n`
+      : "";
+    textToCopy += actionData?.nutch
+      ? `User-agent:Nutch\n${actionData?.nutch}\n`
+      : "";
+    textToCopy += actionData?.alexa
+      ? `User-agent:ia_archiver\n${actionData?.alexa}\n`
+      : "";
+    textToCopy += actionData?.baidu
+      ? `User-agent:baiduspider\n${actionData?.baidu}\n`
+      : "";
+    textToCopy += actionData?.naver
+      ? `User-agent:naverbot\n${actionData?.naver}\n`
+      : "";
+    textToCopy += actionData?.naver
+      ? `User-agent:yeti\n${actionData?.naver}\n`
+      : "";
+    textToCopy += actionData?.msnPicSearch
+      ? `User-agent:psbot\n${actionData?.msnPicSearch}\n`
+      : "";
+    textToCopy += actionData?.defaultValue
+      ? `User-agent:*\n${actionData?.defaultValue}\n`
+      : "";
+    textToCopy += actionData?.crawlDelay
+      ? `Crawl-delay:\n${actionData?.crawlDelay}\n`
+      : "";
+    if (actionData?.directories?.length > 0) {
+      actionData?.directories?.forEach((dir, index) => {
+        textToCopy += `Disallow:${dir}\n`;
+      });
+    }
+    textToCopy += actionData?.sitemap ? `Sitemap:${actionData?.sitemap}` : "";
+    if (copy(textToCopy)) {
+      toast.success("Text Copied.");
+    }
   };
-  useEffect(() => {
-    console.log(restrictedDir);
-  }, [restrictedDir]);
 
   return (
     <>
-      <div className="text-center px-4 mt-12 mb-8 flex flex-col items-center justify-center">
-        <h2 className="font-bold text-2xl tracking-wide">
-          Online Open Graph Generator
-        </h2>
-        <p className="text-sm text-gray-500 tracking-wide mt-2 max-w-xl">
+      <div className="text-center px-4 mt-8 mb-5 flex flex-col items-center justify-center bg-white rounded-md  py-6">
+        <h2 className="font-bold text-2xl">Online Open Graph Generator</h2>
+        <p className="text-sm text-gray-500  mt-1 max-w-xl">
           Whether you want to generate Open Graph meta tags you can simply use
           this tool to generate it.
         </p>
@@ -113,13 +159,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="defaultValue"
-                className="font-medium mb-3 block text-base">
-                defaultValue - All Robots are
+                className="font-medium mb-3 block text-sm text-gray-600">
+                Default - All Robots are
               </label>
               <select
                 id="defaultValue"
                 name="defaultValue"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
               </select>
@@ -127,13 +173,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="crawlDelay"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Crawl Delay
               </label>
               <select
                 id="crawlDelay"
                 name="crawlDelay"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Default - No Delay</option>
                 <option value="5">5 Seconds </option>
                 <option value="10">10 Seconds </option>
@@ -145,14 +191,14 @@ export default function RobotsTextGenerator() {
             <div className="col-span-2">
               <label
                 htmlFor="sitemap"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Sitemap (Leave blank if you don't have)
               </label>
               <input
                 id="sitemap"
                 name="sitemap"
                 placeholder="Sitemap URL eg: https://example.com/sitemap.xml"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"></input>
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none"></input>
             </div>
           </div>
 
@@ -164,13 +210,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="google"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Google
               </label>
               <select
                 id="google"
                 name="google"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -179,13 +225,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="googleImage"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Google Image
               </label>
               <select
                 id="googleImage"
                 name="googleImage"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -194,13 +240,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="googleMobile"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Google Mobile
               </label>
               <select
                 id="googleMobile"
                 name="googleMobile"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -209,13 +255,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="msnSearch"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 MSN Search
               </label>
               <select
                 id="msnSearch"
                 name="msnSearch"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -224,13 +270,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="yahoo"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Yahoo
               </label>
               <select
                 id="yahoo"
                 name="yahoo"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -239,13 +285,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="yahooMm"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Yahoo MM
               </label>
               <select
                 id="yahooMm"
                 name="yahooMm"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -254,26 +300,28 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="yahooBlogs"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Yahoo Blogs
               </label>
               <select
                 id="yahooBlogs"
                 name="yahooBlogs"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
               </select>
             </div>
             <div>
-              <label htmlFor="ask" className="font-medium mb-3 block text-base">
+              <label
+                htmlFor="ask"
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Ask/Teoma
               </label>
               <select
                 id="ask"
                 name="ask"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -282,13 +330,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="gigaBlast"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 GigaBlast
               </label>
               <select
                 id="gigaBlast"
                 name="gigaBlast"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -297,13 +345,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="dmozChecker"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 DMOZ Checker
               </label>
               <select
                 id="dmozChecker"
                 name="dmozChecker"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -312,13 +360,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="nutch"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Nutch
               </label>
               <select
                 id="nutch"
                 name="nutch"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -327,13 +375,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="alexa"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Alexa/Wayback
               </label>
               <select
                 id="alexa"
                 name="alexa"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -342,13 +390,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="baidu"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Baidu
               </label>
               <select
                 id="baidu"
                 name="baidu"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -357,13 +405,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="naver"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 Naver
               </label>
               <select
                 id="naver"
                 name="naver"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -372,13 +420,13 @@ export default function RobotsTextGenerator() {
             <div>
               <label
                 htmlFor="msnPicSearch"
-                className="font-medium mb-3 block text-base">
+                className="font-medium mb-3 block text-sm text-gray-600">
                 MSN Pic Search
               </label>
               <select
                 id="msnPicSearch"
                 name="msnPicSearch"
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
                 <option value="">Same as Default</option>
                 <option value="Allow: /">Allowed</option>
                 <option value="Disallow: /">Refused</option>
@@ -386,7 +434,7 @@ export default function RobotsTextGenerator() {
             </div>
           </div>
 
-          <div className="mt-6 text-gray-700 flex items-center justify-between">
+          <div className="mt-5 text-gray-700 flex items-center justify-between">
             <h3>Restricted Directories</h3>
             <p className="text-xs italic">
               The path is relative to root and must contain a trailing slash "/"
@@ -403,7 +451,7 @@ export default function RobotsTextGenerator() {
                     placeholder="Directory Path"
                     value={dir}
                     onChange={(e) => handleRestrictedDir(e, index)}
-                    className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"></input>
+                    className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none"></input>
                   {restrictedDir.length > 1 &&
                   index != restrictedDir.length - 1 ? (
                     <button
@@ -447,34 +495,216 @@ export default function RobotsTextGenerator() {
             </button>
           </div>
 
-          <div className="text-base text-gray-500 font-mono">
-            {/* &lt;meta property="og:title" content="{values.siteTitle}"&gt;
-          <br />
-          &lt;meta property="og:site_name" content="{values.siteName}"&gt;
-          <br />
-          &lt;meta property="og:url" content="{values.siteUrl}"&gt;
-          <br />
-          &lt;meta property="og:description" content="{values.siteDescription}"
-          &gt;
-          <br />
-          &lt;meta property="og:type" content="{values.type}"&gt;
-          <br /> */}
-            {/* {values.images.map((image, index) => {
-            return (
-              <Fragment key={index + Date.now()}>
-                &lt;meta property="og:image" content="{image}"&gt;
+          <div className="text-sm text-gray-500 font-mono">
+            {actionData?.google ? (
+              <>
+                User-agent:Googlebot
                 <br />
-              </Fragment>
-            );
-          })} */}
+                {actionData?.google}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.googleImage ? (
+              <>
+                User-agent:googlebot-image
+                <br />
+                {actionData?.googleImage}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.googleMobile ? (
+              <>
+                User-agent:googlebot-mobile
+                <br />
+                {actionData?.googleMobile}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.msnSearch ? (
+              <>
+                User-agent:MSNBot
+                <br />
+                {actionData?.msnSearch}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.yahoo ? (
+              <>
+                User-agent:Slurp
+                <br />
+                {actionData?.yahoo}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.yahooMm ? (
+              <>
+                User-agent:yahoo-mmcrawler
+                <br />
+                {actionData?.yahooMm}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.yahooBlogs ? (
+              <>
+                User-agent:yahoo-blogs/v3.9
+                <br />
+                {actionData?.yahooBlogs}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.ask ? (
+              <>
+                User-agent:Teoma
+                <br />
+                {actionData?.ask}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.gigaBlast ? (
+              <>
+                User-agent:Gigabot
+                <br />
+                {actionData?.gigaBlast}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.dmozChecker ? (
+              <>
+                User-agent:Robozilla
+                <br />
+                {actionData?.dmozChecker}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.nutch ? (
+              <>
+                User-agent:Nutch
+                <br />
+                {actionData?.nutch}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.alexa ? (
+              <>
+                User-agent:ia_archiver
+                <br />
+                {actionData?.alexa}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.baidu ? (
+              <>
+                User-agent:baiduspider
+                <br />
+                {actionData?.baidu}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.naver ? (
+              <>
+                User-agent:naverbot
+                <br />
+                {actionData?.naver}
+                <br />
+                User-agent: yeti
+                <br />
+                {actionData?.naver}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.msnPicSearch ? (
+              <>
+                User-agent:psbot
+                <br />
+                {actionData?.msnPicSearch}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.defaultValue ? (
+              <>
+                User-agent:*
+                <br />
+                {actionData?.defaultValue}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.crawlDelay ? (
+              <>
+                Crawl-delay: {actionData?.crawlDelay}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+
+            {actionData?.directories?.length > 0
+              ? actionData?.directories?.map((dir, index) => {
+                  return (
+                    <React.Fragment key={index}>
+                      Disallow: {dir}
+                      <br />
+                    </React.Fragment>
+                  );
+                })
+              : ""}
+
+            {actionData?.sitemap ? <>Sitemap: {actionData?.sitemap}</> : ""}
           </div>
         </section>
       )}
       <section className="bg-white rounded-md p-4 mt-5">
-        <h2 className="font-semibold mb-3 text-xl border-b border-gray-100 pb-3">
+        <h2 className="font-semibold mb-3 text-xl border-b border-gray-100  pb-3">
           About Open Graph Generator
         </h2>
-        <div className="text-base text-gray-500 font-light">
+        <div className="text-sm text-gray-500 font-light">
           <p>
             Open Graph generator is one of smartest free online tool from Sharp
             SEO Tools for generating Open Graph Tags.
