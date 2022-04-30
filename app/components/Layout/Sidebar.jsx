@@ -1,4 +1,3 @@
-import { Link } from "@remix-run/react";
 import Search from "~/components/Search";
 import SidebarListItem from "~/components/SidebarListItem";
 
@@ -6,13 +5,13 @@ export default function Sidebar() {
   return (
     <div>
       <div>
-        {/* <div>
-          <h2 className='font-medium text-md'>Search Products</h2>
-          <div className='mt-2'>
+        <div>
+          <h2 className="font-medium text-md">Search Products</h2>
+          <div className="mt-2">
             <Search />
           </div>
-        </div> */}
-        <div className="mt-2">
+        </div>
+        <div className="mt-5">
           <div className="w-full rounded-md bg-white h-[250px] flex items-center justify-center">
             Ads
           </div>

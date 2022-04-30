@@ -2,41 +2,21 @@ import { Form, useActionData, useTransition } from "@remix-run/react";
 import React, { Fragment, useEffect, useState } from "react";
 import {
   RiAddCircleFill,
+  RiDownloadLine,
   RiFileCopyLine,
   RiIndeterminateCircleFill,
 } from "react-icons/ri";
 import copy from "copy-to-clipboard";
 import toast from "react-hot-toast";
+import { saveAs } from "file-saver";
 
 export const meta = () => {
   return {
-    title: "Open Graph Generator - Sharp Seo Tools",
+    title: "Online Robots.txt Generator  - Sharp Seo Tools",
     description:
-      "Open Graph Generator is an online tools that let you generate Open graph meta tags for your website more easily",
-    keywords:
-      "seo, meta, meta tags, open graph, ranking, social share, keywords",
+      "Robots.txt Generator is an online tools that let you generate Robots.txt for your website instantly",
+    keywords: "seo, meta, meta tags, robots.txt, ranking, keywords",
   };
-};
-
-const initialValues = {
-  defaultValue: "Allow: /",
-  crawlDelay: "",
-  sitemap: "",
-  google: "",
-  googleImage: "",
-  googleMobile: "",
-  msnSearch: "",
-  yahoo: "",
-  yahooMm: "",
-  yahooBlogs: "",
-  ask: "",
-  gigaBlast: "",
-  dmozChecker: "",
-  nutch: "",
-  alexa: "",
-  baidu: "",
-  naver: "",
-  msnPicSearch: "",
 };
 
 export const action = async ({ request }) => {
@@ -73,86 +53,93 @@ export default function RobotsTextGenerator() {
     setRestrictedDir(_newElements);
   };
 
-  const handleCopy = () => {
-    let textToCopy = "hellow owrld";
+  const handleResult = (action) => {
+    let textData = "";
 
-    textToCopy += actionData?.google
+    textData += actionData?.google
       ? `User-agent:Googlebot\n${actionData?.google}\n`
       : "";
-    textToCopy += actionData?.googleImage
+    textData += actionData?.googleImage
       ? `User-agent:googlebot-image\n${actionData?.googleImage}\n`
       : "";
-    textToCopy += actionData?.googleMobile
+    textData += actionData?.googleMobile
       ? `User-agent:googlebot-mobile\n${actionData?.googleMobile}\n`
       : "";
-    textToCopy += actionData?.msnSearch
+    textData += actionData?.msnSearch
       ? `User-agent:MSNBot\n${actionData?.msnSearch}\n`
       : "";
-    textToCopy += actionData?.yahoo
+    textData += actionData?.yahoo
       ? `User-agent:Slurp\n${actionData?.yahoo}\n`
       : "";
-    textToCopy += actionData?.yahooMm
+    textData += actionData?.yahooMm
       ? `User-agent:yahoo-mmcrawler\n${actionData?.yahooMm}\n`
       : "";
-    textToCopy += actionData?.yahooBlogs
+    textData += actionData?.yahooBlogs
       ? `User-agent:yahoo-blogs/v3.9\n${actionData?.yahooBlogs}\n`
       : "";
-    textToCopy += actionData?.ask
-      ? `User-agent:Teoma\n${actionData?.ask}\n`
-      : "";
-    textToCopy += actionData?.gigaBlast
+    textData += actionData?.ask ? `User-agent:Teoma\n${actionData?.ask}\n` : "";
+    textData += actionData?.gigaBlast
       ? `User-agent:Gigabot\n${actionData?.gigaBlast}\n`
       : "";
-    textToCopy += actionData?.dmozChecker
+    textData += actionData?.dmozChecker
       ? `User-agent:Robozilla\n${actionData?.dmozChecker}\n`
       : "";
-    textToCopy += actionData?.nutch
+    textData += actionData?.nutch
       ? `User-agent:Nutch\n${actionData?.nutch}\n`
       : "";
-    textToCopy += actionData?.alexa
+    textData += actionData?.alexa
       ? `User-agent:ia_archiver\n${actionData?.alexa}\n`
       : "";
-    textToCopy += actionData?.baidu
+    textData += actionData?.baidu
       ? `User-agent:baiduspider\n${actionData?.baidu}\n`
       : "";
-    textToCopy += actionData?.naver
+    textData += actionData?.naver
       ? `User-agent:naverbot\n${actionData?.naver}\n`
       : "";
-    textToCopy += actionData?.naver
+    textData += actionData?.naver
       ? `User-agent:yeti\n${actionData?.naver}\n`
       : "";
-    textToCopy += actionData?.msnPicSearch
+    textData += actionData?.msnPicSearch
       ? `User-agent:psbot\n${actionData?.msnPicSearch}\n`
       : "";
-    textToCopy += actionData?.defaultValue
+    textData += actionData?.defaultValue
       ? `User-agent:*\n${actionData?.defaultValue}\n`
       : "";
-    textToCopy += actionData?.crawlDelay
+    textData += actionData?.crawlDelay
       ? `Crawl-delay:\n${actionData?.crawlDelay}\n`
       : "";
     if (actionData?.directories?.length > 0) {
       actionData?.directories?.forEach((dir, index) => {
-        textToCopy += `Disallow:${dir}\n`;
+        textData += `Disallow:${dir}\n`;
       });
     }
-    textToCopy += actionData?.sitemap ? `Sitemap:${actionData?.sitemap}` : "";
-    if (copy(textToCopy)) {
-      toast.success("Text Copied.");
+    textData += actionData?.sitemap ? `Sitemap:${actionData?.sitemap}` : "";
+    if (action === "copy") {
+      if (copy(textData)) {
+        toast.success("Text Copied.");
+      }
+    }
+    if (action === "download") {
+      saveAs(
+        new Blob([textData], { type: "text/plain;charset=utf-8" }),
+        "robots.txt"
+      );
+      toast.success("Downloading Started.");
     }
   };
 
   return (
     <>
       <div className="text-center px-4 mt-8 mb-5 flex flex-col items-center justify-center bg-white rounded-md  py-6">
-        <h2 className="font-bold text-2xl">Online Open Graph Generator</h2>
+        <h2 className="font-bold text-2xl">Online Robots.txt Generator</h2>
         <p className="text-sm text-gray-500  mt-1 max-w-xl">
-          Whether you want to generate Open Graph meta tags you can simply use
-          this tool to generate it.
+          Whether you want to generate Robots.txt for your website you can
+          simply use this tool to generate it.
         </p>
       </div>
       <section className="bg-white rounded-md p-8">
         <div className="mb-5 border-b border-gray-100 flex justify-between items-center pb-3">
-          <h2 className="font-semibold text-xl">Enter Meta Details</h2>
+          <h2 className="font-semibold text-xl">Select Details</h2>
         </div>
         <Form method="post" autoComplete="off">
           <div className="grid grid-cols-2 gap-5">
@@ -476,23 +463,35 @@ export default function RobotsTextGenerator() {
           <div className="flex justify-center space-x-3 mt-7">
             <button
               type="submit"
-              className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
+              className="bg-primary text-sm text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
               Generate Robots.txt
             </button>
           </div>
         </Form>
       </section>
-      {/* {transition.state == "submitting" ? "loading" : ""} */}
+
+      {transition.state == "submitting" ? (
+        <div className="text-center p-2">Preparing...</div>
+      ) : (
+        ""
+      )}
 
       {actionData && (
         <section className="bg-white rounded-md p-4 mt-5">
           <div className="mb-3 border-b border-gray-100 flex justify-between items-center pb-3">
             <h2 className="font-semibold text-xl">Results</h2>
-            <button
-              className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
-              onClick={handleCopy}>
-              <RiFileCopyLine /> <span>Copy</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
+                onClick={() => handleResult("download")}>
+                <RiDownloadLine /> <span>Robots.txt</span>
+              </button>
+              <button
+                className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
+                onClick={() => handleResult("copy")}>
+                <RiFileCopyLine /> <span>Copy</span>
+              </button>
+            </div>
           </div>
 
           <div className="text-sm text-gray-500 font-mono">
@@ -702,24 +701,27 @@ export default function RobotsTextGenerator() {
       )}
       <section className="bg-white rounded-md p-4 mt-5">
         <h2 className="font-semibold mb-3 text-xl border-b border-gray-100  pb-3">
-          About Open Graph Generator
+          About Robots.txt Generator
         </h2>
         <div className="text-sm text-gray-500 font-light">
           <p>
-            Open Graph generator is one of smartest free online tool from Sharp
-            SEO Tools for generating Open Graph Tags.
+            Robots.txt Generator is one of smartest free online tool from Sharp
+            SEO Tools for generating Robots.txt for your website.
           </p>
           <p className="mt-1">
-            This Open Graph generator tool let you to generate Open Graph Meta
-            tags for your website. The Meta tags are more important tags for
-            today's website. you may seen that preview of hyper links when we
-            share some url's on social media platforms, those previews are
-            generated from the Open Graph meta tags.
+            Robots.txt is a file that can be placed in the root folder of your
+            website to help search engines index your site more appropriately.
+            Search engines such as Google use website crawlers, or robots that
+            review all the content on your website. There may be parts of your
+            website that you do not want them to crawl to include in user search
+            results, such as admin page. You can add these pages to the file to
+            be explicitly ignored.
           </p>
           <p className="mt-1">
-            The Meta tags helps to boost your website presence and ranking in
-            search engine and also these tags are the helping to reach your
-            website to appropriate users.
+            Robots.txt files use something called the Robots Exclusion Protocol.
+            This website will easily generate the file for you with inputs of
+            pages to be excluded. And this small text file will help you to
+            improve your website SEO and increase the ranking in Search Engines.
           </p>
         </div>
       </section>
