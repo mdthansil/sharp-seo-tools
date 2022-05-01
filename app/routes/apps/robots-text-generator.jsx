@@ -32,7 +32,6 @@ export const action = async ({ request }) => {
 export default function RobotsTextGenerator() {
   const actionData = useActionData();
   const transition = useTransition();
-  console.log(actionData);
 
   const [restrictedDir, setRestrictedDir] = useState(["/cgi-bin/"]);
 
@@ -41,7 +40,6 @@ export default function RobotsTextGenerator() {
   };
 
   const removeRestrictedDir = (e, index) => {
-    console.log(index);
     const prevDirs = [...restrictedDir];
     prevDirs.splice(index, 1);
     setRestrictedDir(prevDirs);

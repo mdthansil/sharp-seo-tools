@@ -1,27 +1,138 @@
-import { Form, useActionData, useTransition } from "@remix-run/react";
-import React, { useState } from "react";
-import { RiDownloadLine, RiFileCopyLine } from "react-icons/ri";
-import copy from "copy-to-clipboard";
+import { useFetcher } from "@remix-run/react";
+import {
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
+} from "@remix-run/node";
+import React, { useCallback, useEffect, useState } from "react";
+import { RiFileCopyLine } from "react-icons/ri";
+import { HexColorPicker } from "react-colorful";
 import toast from "react-hot-toast";
+import copy from "copy-to-clipboard";
 import { saveAs } from "file-saver";
+import { Sharp } from "../../modules.server";
+import JSZip from "jszip";
 
 export const meta = () => {
   return {
-    title: "Online Robots.txt Generator  - Sharp Seo Tools",
+    title: "Online Manifest Generator  - Sharp Seo Tools",
     description:
-      "Robots.txt Generator is an online tools that let you generate Robots.txt for your website instantly",
-    keywords: "seo, meta, meta tags, robots.txt, ranking, keywords",
+      "Manifest Generator is an online tools that let you generate Manifest.json for your website instantly",
+    keywords:
+      "seo, meta, meta tags, robots.txt, manifest.json, pwa, progressive web app, ranking, keywords, install, web app",
   };
 };
 
 export const action = async ({ request }) => {
-  const form = await request.formData();
-  const data = Object.fromEntries(form);
+  const zip = new JSZip();
+  const icons = {
+    icon_192x192: "",
+    icon_256x256: "",
+    icon_384x384: "",
+    icon_512x512: "",
+  };
 
-  const directories = form.getAll("directory");
-  delete data.directory;
-  data.directories = directories;
-  return data;
+  const uploadHandler = unstable_createMemoryUploadHandler({
+    maxFileSize: 2_097_152,
+  });
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  );
+  try {
+    const data = Object.fromEntries(formData);
+    const {
+      iconExtension,
+      iconType,
+      appName,
+      shortName,
+      appDescription,
+      displayMode,
+      orientation,
+      applicationScope,
+      startUrl,
+      themeColor,
+      backgroundColor,
+    } = data;
+
+    // Preparing images
+    const icon = await data.icon.arrayBuffer();
+    icons.icon_192x192 = await (
+      await Sharp(Buffer.from(icon, "binary")).resize(192, 192).toBuffer()
+    ).toString("base64");
+
+    icons.icon_256x256 = await (
+      await Sharp(Buffer.from(icon, "binary")).resize(256, 256).toBuffer()
+    ).toString("base64");
+
+    icons.icon_384x384 = await (
+      await Sharp(Buffer.from(icon, "binary")).resize(384, 384).toBuffer()
+    ).toString("base64");
+
+    icons.icon_512x512 = await (
+      await Sharp(Buffer.from(icon, "binary")).resize(512, 512).toBuffer()
+    ).toString("base64");
+
+    zip.file(`icon-192x192.${iconExtension}`, icons.icon_192x192, {
+      base64: true,
+    });
+    zip.file(`icon-256x256.${iconExtension}`, icons.icon_256x256, {
+      base64: true,
+    });
+    zip.file(`icon-384x384.${iconExtension}`, icons.icon_384x384, {
+      base64: true,
+    });
+    zip.file(`icon-512x512.${iconExtension}`, icons.icon_512x512, {
+      base64: true,
+    });
+
+    const manifestText = `
+    {
+      ${appName && `"name":"${appName}",`}
+      ${shortName && `"short_name":"${shortName}",`}
+      ${appDescription && `"description":"${appDescription}",`}
+      ${themeColor && `"theme_color":"${themeColor}",`}
+      ${backgroundColor && `"background_color":"${backgroundColor}",`}
+      ${displayMode && `"display":"${displayMode}",`}
+      ${orientation && `"orientation":"${orientation}",`}
+      ${applicationScope && `"scope":"${applicationScope}",`}
+      ${startUrl && `"start_url":"${startUrl}",`}
+      "icons": [
+        {
+          "src": "/icon-192x192.${iconExtension}",
+          "sizes": "192x192",
+          "type": "${iconType}"
+        },
+        {
+          "src": "/icon-256x256.${iconExtension}",
+          "sizes": "256x256",
+          "type": "${iconType}"
+        },
+        {
+          "src": "/icon-384x384.${iconExtension}",
+          "sizes": "384x384",
+          "type": "${iconType}"
+        },
+        {
+          "src": "/icon-512x512.${iconExtension}",
+          "sizes": "512x512",
+          "type": "${iconType}"
+        }
+      ]
+    }
+    `;
+
+    zip.file(
+      `manifest.json`,
+      manifestText.replace(/^\s*$(?:\r\n?|\n)/gm, "").replace(/^\s{1,4}/gm, "")
+    );
+
+    let zipBase64 = await zip.generateAsync({ type: "base64" });
+    zipBase64 = `data:application/zip;base64,${zipBase64}`;
+
+    return zipBase64;
+  } catch (e) {
+    return null;
+  }
 };
 
 const initialValues = {
@@ -32,98 +143,142 @@ const initialValues = {
   orientation: "",
   applicationScope: "/",
   startUrl: "/",
-  themeColor: "#ffff00",
-  backgroundColor: "#ff0000",
+  themeColor: "#36de18",
+  backgroundColor: "#00c6ff",
+  icon: {
+    name: "",
+    type: "",
+    extension: "",
+  },
 };
 
+const colorPicker = Object.freeze({
+  none: 0,
+  themeColor: 1,
+  backgroundColor: 2,
+});
+
+const allowedFormats = [
+  "image/png",
+  "image/jpg",
+  "image/jpeg",
+  "image/gif",
+  "image/webp",
+];
+
 export default function ManifestJsonGenerator() {
-  const actionData = useActionData();
-  const transition = useTransition();
+  const fetcher = useFetcher();
+  const data = fetcher.data;
 
+  const [errors, setErrors] = useState({});
   const [values, setValues] = useState(initialValues);
+  const [activeColorPicker, setActiveColorPicker] = useState(0);
 
-  // const handleResult = (action) => {
-  //   let textData = "";
+  const handleResult = (action) => {
+    let textData = "";
+    textData += "{\n";
+    if (values.appName) {
+      textData += `  "name": "${values.appName}",\n`;
+    }
+    if (values.shortName) {
+      textData += `  "short_name": "${values.shortName}",\n`;
+    }
+    if (values.appDescription) {
+      textData += `  "description": "${values.appDescription}",\n`;
+    }
+    if (values.themeColor) {
+      textData += `  "theme_color": "${values.themeColor}",\n`;
+    }
+    if (values.backgroundColor) {
+      textData += `  "background_color": "${values.backgroundColor}",\n`;
+    }
+    if (values.displayMode) {
+      textData += `  "display": "${values.displayMode}",\n`;
+    }
+    if (values.orientation) {
+      textData += `  "orientation": "${values.orientation}",\n`;
+    }
+    if (values.applicationScope) {
+      textData += `  "scope": "${values.applicationScope}",\n`;
+    }
+    if (values.startUrl) {
+      textData += `  "start_url": "${values.startUrl}",\n`;
+    }
 
-  //   textData += actionData?.google
-  //     ? `User-agent:Googlebot\n${actionData?.google}\n`
-  //     : "";
-  //   textData += actionData?.googleImage
-  //     ? `User-agent:googlebot-image\n${actionData?.googleImage}\n`
-  //     : "";
-  //   textData += actionData?.googleMobile
-  //     ? `User-agent:googlebot-mobile\n${actionData?.googleMobile}\n`
-  //     : "";
-  //   textData += actionData?.msnSearch
-  //     ? `User-agent:MSNBot\n${actionData?.msnSearch}\n`
-  //     : "";
-  //   textData += actionData?.yahoo
-  //     ? `User-agent:Slurp\n${actionData?.yahoo}\n`
-  //     : "";
-  //   textData += actionData?.yahooMm
-  //     ? `User-agent:yahoo-mmcrawler\n${actionData?.yahooMm}\n`
-  //     : "";
-  //   textData += actionData?.yahooBlogs
-  //     ? `User-agent:yahoo-blogs/v3.9\n${actionData?.yahooBlogs}\n`
-  //     : "";
-  //   textData += actionData?.ask ? `User-agent:Teoma\n${actionData?.ask}\n` : "";
-  //   textData += actionData?.gigaBlast
-  //     ? `User-agent:Gigabot\n${actionData?.gigaBlast}\n`
-  //     : "";
-  //   textData += actionData?.dmozChecker
-  //     ? `User-agent:Robozilla\n${actionData?.dmozChecker}\n`
-  //     : "";
-  //   textData += actionData?.nutch
-  //     ? `User-agent:Nutch\n${actionData?.nutch}\n`
-  //     : "";
-  //   textData += actionData?.alexa
-  //     ? `User-agent:ia_archiver\n${actionData?.alexa}\n`
-  //     : "";
-  //   textData += actionData?.baidu
-  //     ? `User-agent:baiduspider\n${actionData?.baidu}\n`
-  //     : "";
-  //   textData += actionData?.naver
-  //     ? `User-agent:naverbot\n${actionData?.naver}\n`
-  //     : "";
-  //   textData += actionData?.naver
-  //     ? `User-agent:yeti\n${actionData?.naver}\n`
-  //     : "";
-  //   textData += actionData?.msnPicSearch
-  //     ? `User-agent:psbot\n${actionData?.msnPicSearch}\n`
-  //     : "";
-  //   textData += actionData?.defaultValue
-  //     ? `User-agent:*\n${actionData?.defaultValue}\n`
-  //     : "";
-  //   textData += actionData?.crawlDelay
-  //     ? `Crawl-delay:\n${actionData?.crawlDelay}\n`
-  //     : "";
-  //   if (actionData?.directories?.length > 0) {
-  //     actionData?.directories?.forEach((dir, index) => {
-  //       textData += `Disallow:${dir}\n`;
-  //     });
-  //   }
-  //   textData += actionData?.sitemap ? `Sitemap:${actionData?.sitemap}` : "";
-  //   if (action === "copy") {
-  //     if (copy(textData)) {
-  //       toast.success("Text Copied.");
-  //     }
-  //   }
-  //   if (action === "download") {
-  //     saveAs(
-  //       new Blob([textData], { type: "text/plain;charset=utf-8" }),
-  //       "robots.txt"
-  //     );
-  //     toast.success("Downloading Started.");
-  //   }
-  // };
+    textData += "}";
+
+    if (action === "copy") {
+      if (copy(textData)) {
+        toast.success("Text Copied.");
+      }
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
   };
 
+  const handleColorPicker = (picker) => {
+    setActiveColorPicker(picker);
+  };
+
+  const dismissColorPicker = () => {
+    setActiveColorPicker(colorPicker.none);
+  };
+
+  const handleIconFile = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const { name, type, size } = file;
+      if (size > 2_097_152) {
+        setErrors({ ...errors, icon: "Image size too large (max 2mb)." });
+        return;
+      }
+      if (!allowedFormats.includes(type)) {
+        setErrors({
+          ...errors,
+          icon: "Invalid image (Valid formats: .png, .jpg, .jpeg, .gif)",
+        });
+        return;
+      }
+      setErrors({});
+      setValues({
+        ...values,
+        icon: { name, type, extension: name?.split(".").pop() },
+      });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    if (Object.values(errors).length >= 1) {
+      e.preventDefault();
+    }
+    if (!values.icon.name) {
+      setErrors({ ...errors, icon: "Please select an image icon." });
+      e.preventDefault();
+    }
+  };
+
+  const download = useCallback(async () => {
+    const zipFile = await fetch(data);
+    saveAs(await zipFile.blob(), "manifest.zip");
+  }, [data]);
+
+  useEffect(() => {
+    if (fetcher.state == "idle" && data) {
+      download();
+    }
+  }, [data, fetcher.state, download]);
+
   return (
     <>
+      {activeColorPicker != 0 && (
+        <div
+          className="fixed inset-0 bg-transparent overlay"
+          onClick={dismissColorPicker}
+        />
+      )}
       <div className="text-center px-4 mt-8 mb-5 flex flex-col items-center justify-center rounded-md  py-6 bg-white">
         <h2 className="font-bold text-2xl">Online Manifest Generator</h2>
         <p className="text-sm text-gray-500  mt-1 max-w-xl">
@@ -135,13 +290,31 @@ export default function ManifestJsonGenerator() {
         <div className="mb-5 border-b border-gray-100 flex justify-between items-center pb-3">
           <h2 className="font-semibold text-xl">Enter App Details</h2>
         </div>
-        <Form method="post" autoComplete="off">
+        <fetcher.Form
+          method="post"
+          autoComplete="off"
+          encType="multipart/form-data"
+          onSubmit={handleSubmit}>
+          {values.icon.type ? (
+            <input type="hidden" name="iconType" value={values.icon.type} />
+          ) : (
+            ""
+          )}
+          {values.icon.extension ? (
+            <input
+              type="hidden"
+              name="iconExtension"
+              value={values.icon.extension}
+            />
+          ) : (
+            ""
+          )}
           <div className="grid grid-cols-2 gap-x-5 gap-y-3">
             <div>
               <label
                 htmlFor="appName"
                 className="font-medium mb-3 block text-sm text-gray-600">
-                App Name
+                App Name <span className="text-red-500 text-md">*</span>
               </label>
               <input
                 id="appName"
@@ -149,6 +322,7 @@ export default function ManifestJsonGenerator() {
                 placeholder="App Name"
                 onChange={handleChange}
                 value={values.appName}
+                required
                 className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none"
               />
             </div>
@@ -156,7 +330,7 @@ export default function ManifestJsonGenerator() {
               <label
                 htmlFor="shortName"
                 className="font-medium mb-3 block text-sm text-gray-600">
-                Short Name
+                Short Name <span className="text-red-500 text-md">*</span>
               </label>
               <input
                 id="shortName"
@@ -164,6 +338,7 @@ export default function ManifestJsonGenerator() {
                 placeholder="Short Name"
                 onChange={handleChange}
                 value={values.shortName}
+                required
                 className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none"
               />
             </div>
@@ -240,7 +415,7 @@ export default function ManifestJsonGenerator() {
               <label
                 htmlFor="startUrl"
                 className="font-medium mb-3 block text-sm text-gray-600">
-                Start URL
+                Start URL <span className="text-red-500 text-md">*</span>
               </label>
               <input
                 id="startUrl"
@@ -248,6 +423,7 @@ export default function ManifestJsonGenerator() {
                 placeholder="Start URL (Default: /)"
                 onChange={handleChange}
                 value={values.startUrl}
+                required
                 className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none"
               />
               <span className="text-gray-400 text-xs italic tracking-wide">
@@ -260,10 +436,12 @@ export default function ManifestJsonGenerator() {
                 className="font-medium mb-3 block text-sm text-gray-600">
                 Theme Color
               </label>
-              <div className="flex space-x-2 items-center">
+              <div className="flex space-x-2 items-center relative">
                 <div
                   style={{ backgroundColor: values.themeColor }}
-                  className="flex-shrink-0 self-stretch w-10 border border-gray-200 rounded-md"></div>
+                  className="flex-shrink-0 cursor-pointer self-stretch w-10 border border-gray-200 rounded-md"
+                  onClick={() => handleColorPicker(colorPicker.themeColor)}
+                />
                 <input
                   id="themeColor"
                   name="themeColor"
@@ -272,46 +450,77 @@ export default function ManifestJsonGenerator() {
                   value={values.themeColor}
                   className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none"
                 />
+                {activeColorPicker === colorPicker.themeColor && (
+                  <div className="absolute top-10 -left-2 color-picker">
+                    <HexColorPicker
+                      color={values.themeColor}
+                      onChange={(color) =>
+                        setValues({ ...values, themeColor: color })
+                      }
+                    />
+                  </div>
+                )}
               </div>
             </div>
-            <div className="relative">
+            <div>
               <label
                 htmlFor="backgroundColor"
                 className="font-medium mb-3 block text-sm text-gray-600">
-                Background Color
+                Background Color <span className="text-red-500 text-md">*</span>
               </label>
-              <div className="flex space-x-2 items-center">
+              <div className="flex space-x-2 items-center relative">
                 <div
                   style={{ backgroundColor: values.backgroundColor }}
-                  className="flex-shrink-0 self-stretch w-10 border border-gray-200 rounded-md"></div>
+                  className="flex-shrink-0 self-stretch w-10 border cursor-pointer border-gray-200 rounded-md"
+                  onClick={() => handleColorPicker(colorPicker.backgroundColor)}
+                />
                 <input
                   id="backgroundColor"
                   name="backgroundColor"
                   placeholder="Background Color (eg: #000000)"
                   onChange={handleChange}
                   value={values.backgroundColor}
+                  required
                   className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none"
                 />
+                {activeColorPicker === colorPicker.backgroundColor && (
+                  <div className="absolute top-10 -left-2 color-picker">
+                    <HexColorPicker
+                      color={values.backgroundColor}
+                      onChange={(color) =>
+                        setValues({ ...values, backgroundColor: color })
+                      }
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div className="col-span-2">
-              <label
-                htmlFor="icon"
-                className="font-medium mb-3 block text-sm text-gray-600">
-                Icons
+              <label className="font-medium mb-3 block text-sm text-gray-600">
+                Icon (Max 2MB)
               </label>
               <input
                 type="file"
                 id="icon"
                 name="icon"
-                onChange={() => {}}
+                onChange={handleIconFile}
                 placeholder="Background Color (eg: #000000)"
-                className="w-full text-gray-600 file:bg-primary/10  file:uppercase file:text-primary file:border-0 file:rounded-l-sm file:mr-4 file:py-2 file:px-4 border border-gray-200  rounded-md text-sm outline-none"
+                className={`w-full text-gray-600 file:uppercase file:border-0 file:rounded-l-sm file:cursor-pointer cursor-pointer file:mr-4 file:py-2 file:px-4 border  rounded-md text-sm outline-none ${
+                  errors?.icon
+                    ? "border-red-500 file:bg-red-500/10 file:text-red-500"
+                    : "border-gray-200 file:bg-primary/10 file:text-black"
+                }`}
               />
-              <span className="text-gray-400 text-xs italic tracking-wide">
-                Please upload a 512x512 image for the icon and we'll generate
-                the remaining sizes
-              </span>
+              {errors?.icon ? (
+                <span className="text-red-500 text-xs italic tracking-wide">
+                  {errors?.icon}
+                </span>
+              ) : (
+                <span className="text-gray-400 text-xs italic tracking-wide">
+                  Please upload a 512x512 image for the icon and we'll generate
+                  the remaining sizes
+                </span>
+              )}
             </div>
           </div>
 
@@ -322,55 +531,108 @@ export default function ManifestJsonGenerator() {
               Generate Manifest.json
             </button>
           </div>
-        </Form>
+        </fetcher.Form>
       </section>
 
-      {transition.state == "submitting" ? (
-        <div className="text-center p-2">Preparing...</div>
+      {fetcher.state == "submitting" ? (
+        <div className="text-center p-2">Generating...</div>
       ) : (
         ""
       )}
 
-      {actionData && (
-        <section className="bg-white rounded-md p-4 mt-5">
-          <div className="mb-3 border-b border-gray-100 flex justify-between items-center pb-3">
-            <h2 className="font-semibold text-xl">Results</h2>
-            <div className="flex items-center space-x-2">
-              <button className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide">
-                <RiDownloadLine /> <span>Robots.txt</span>
-              </button>
-              <button className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide">
-                <RiFileCopyLine /> <span>Copy</span>
-              </button>
-            </div>
+      <section className="bg-white rounded-md p-4 mt-5">
+        <div className="mb-3 border-b border-gray-100 flex justify-between items-center pb-3">
+          <h2 className="font-semibold text-xl">Preview</h2>
+          <div className="flex items-center space-x-2">
+            <button
+              className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
+              onClick={() => handleResult("copy")}>
+              <RiFileCopyLine />
+              <span>Copy</span>
+            </button>
           </div>
+        </div>
 
-          <div className="text-sm text-gray-500 font-mono"></div>
-        </section>
-      )}
+        <div className="text-sm text-gray-500 font-mono ">
+          {"{"}
+          <ul>
+            {values.appName ? (
+              <li className="pl-5">{`"name": "${values.appName}",`}</li>
+            ) : (
+              ``
+            )}
+            {values.shortName ? (
+              <li className="pl-5">{`"short_name": "${values.shortName}"`}</li>
+            ) : (
+              ``
+            )}
+            {values.appDescription ? (
+              <li className="pl-5">{`"description": "${values.appDescription}",`}</li>
+            ) : (
+              ``
+            )}
+            {values.themeColor ? (
+              <li className="pl-5">{`"theme_color": "${values.themeColor}",`}</li>
+            ) : (
+              ``
+            )}
+            {values.backgroundColor ? (
+              <li className="pl-5">{`"background_color": "${values.backgroundColor}",`}</li>
+            ) : (
+              ``
+            )}
+            {values.displayMode ? (
+              <li className="pl-5">{`"display": "${values.displayMode}",`}</li>
+            ) : (
+              ``
+            )}
+            {values.orientation ? (
+              <li className="pl-5">{`"orientation": "${values.orientation}",`}</li>
+            ) : (
+              ``
+            )}
+            {values.applicationScope ? (
+              <li className="pl-5">{`"scope": "${values.applicationScope}",`}</li>
+            ) : (
+              ``
+            )}
+            {values.startUrl ? (
+              <li className="pl-5">{`"start_url": "${values.startUrl}",`}</li>
+            ) : (
+              ``
+            )}
+          </ul>
+          {"}"}
+        </div>
+      </section>
+
       <section className="bg-white rounded-md p-4 mt-5">
         <h2 className="font-semibold mb-3 text-xl border-b border-gray-100  pb-3">
-          About Robots.txt Generator
+          About Manifest Generator
         </h2>
         <div className="text-sm text-gray-500 font-light">
           <p>
-            Robots.txt Generator is one of smartest free online tool from Sharp
-            SEO Tools for generating Robots.txt for your website.
+            Manifest Generator is one of smartest free online tool from Sharp
+            SEO Tools for generating Manifest.json for your website.
           </p>
           <p className="mt-1">
-            Robots.txt is a file that can be placed in the root folder of your
-            website to help search engines index your site more appropriately.
-            Search engines such as Google use website crawlers, or robots that
-            review all the content on your website. There may be parts of your
-            website that you do not want them to crawl to include in user search
-            results, such as admin page. You can add these pages to the file to
-            be explicitly ignored.
+            Web app manifest (i.e. manifest.json) is a JSON file that provides
+            the necessary metadata for your Progressive Web App. With a
+            properly-configured web app manifest, your PWA can behave more
+            similarly to a native app — installable to home screen, and capable
+            of smooth splash screen transitions.
           </p>
           <p className="mt-1">
-            Robots.txt files use something called the Robots Exclusion Protocol.
-            This website will easily generate the file for you with inputs of
-            pages to be excluded. And this small text file will help you to
-            improve your website SEO and increase the ranking in Search Engines.
+            Configuring your web app manifest typically means describing how
+            your PWA will look like on the user’s home screen, as well as how
+            it’ll look when the user first launches your app. Additionally,
+            behavior of the browser UI (whether it’ll be visible or hidden) is
+            also configurable.
+          </p>
+          <p className="mt-1">
+            Web app manifest is fully supported in Chrome, Edge, Android
+            Browser, Chrome for Android, Firefox for Android, and Samsung
+            Internet. It is partially supported in Safari.
           </p>
         </div>
       </section>
