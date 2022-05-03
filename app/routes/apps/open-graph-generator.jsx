@@ -53,7 +53,7 @@ export default function OpenGraphGenerator() {
 
   const handleImages = (e) => {
     const imageUrl = e.target.value;
-    const index = e.target.getAttribute("data-index");
+    const index = e.currentTarget.getAttribute("data-index");
     const _newElements = values.images;
     _newElements[index] = imageUrl;
     setValues({ ...values, images: _newElements });

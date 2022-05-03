@@ -1,18 +1,19 @@
 import { Form, useActionData } from "@remix-run/react";
 export const action = async ({ request }) => {
   let form = await request.formData();
-  let { url, operation } = Object.fromEntries(form);
+  let { input, action } = Object.fromEntries(form);
+  console.log(input, action);
   const res = {
     body: "",
     errors: [],
   };
 
-  if (url != "" || typeof url !== "undefined") {
-    if (operation == "encode") {
-      res.body = encodeURIComponent(url);
+  if (input != "" || typeof input !== "undefined") {
+    if (action == "encode") {
+      res.body = encodeURIComponent(input);
     }
-    if (operation == "decode") {
-      res.body = decodeURIComponent(url);
+    if (action == "decode") {
+      res.body = decodeURIComponent(input);
     }
   } else {
     res.errors.push("Please enter a valid Url");
@@ -79,13 +80,13 @@ export default function UrlEncoderDecoder() {
             <button
               type="submit"
               value="encode"
-              name="operation"
+              name="action"
               className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
               Encode
             </button>
             <button
               type="submit"
-              name="operation"
+              name="action"
               value="decode"
               className="bg-primary text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
               Decode

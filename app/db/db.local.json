@@ -1,0 +1,12 @@
+{
+  "apps": [
+    {
+      "name": "URL Encoder/Decoder",
+      "path": "url-encoder-decoder"
+    },
+    {
+      "name": "Base64 Encoder/Decoder",
+      "path": "base64-encoder-decoder"
+    }
+  ]
+}
