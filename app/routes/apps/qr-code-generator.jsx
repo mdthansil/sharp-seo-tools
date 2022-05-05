@@ -36,10 +36,11 @@ const qrCodeTypes = {
 
 export const meta = () => {
   return {
-    title: "Online Robots.txt Generator  - Sharp Seo Tools",
+    title: "Online QR Code Generator  - Sharp Seo Tools",
     description:
-      "Robots.txt Generator is an online tools that let you generate Robots.txt for your website instantly",
-    keywords: "seo, meta, meta tags, robots.txt, ranking, keywords",
+      "QR Code Generator is an online tools that let you generate QR Code instantly for you, It supports URL, VCard, Text, WIFI, Email, SMS, Phone etc...",
+    keywords:
+      "qrcode, qr code, qr code generator, barcode, barcode generator, online qr, keywords",
   };
 };
 
@@ -58,15 +59,14 @@ export const action = async ({ request }) => {
 
   if (action === qrCodeTypes.vCard) {
     let { fullName, email, phone, address } = data;
-    qrCodeData = `
-      BEGIN:VCARD\n
-      VERSION:3.0\n
-      FN:${fullName}
-      EMAIL;TYPE=INTERNET;TYPE=PREF:${email}\n
-      TEL;TYPE=cell:${phone}\n
-      ADR;TYPE=home:;;${address}
-      END:VCARD
-      `;
+    qrCodeData = "";
+    qrCodeData += "BEGIN:VCARD\n";
+    qrCodeData += "VERSION:3.0\n";
+    qrCodeData += "N:" + fullName + "\n";
+    qrCodeData += "EMAIL:" + email + "\n";
+    qrCodeData += "TEL;CELL:" + phone + "\n";
+    qrCodeData += "ADR:" + address + "\n";
+    qrCodeData += "END:VCARD";
   }
 
   if (action === qrCodeTypes.text) {
@@ -99,7 +99,7 @@ export const action = async ({ request }) => {
       margin: 5,
       errorCorrectionLevel: parseInt(errorCorrectionLevel),
       type: "image/png",
-      version: 8,
+      version: 7,
       width: parseInt(imageSize),
       rendererOpts: {
         quality: 1,
@@ -121,20 +121,21 @@ export default function QrCodeGenerator() {
     setActiveTab(_activeTab);
   };
 
-  const handleResult = (action) => {
+  const handleResult = async (action) => {
     if (action === "download" && qrForm.data) {
-      saveAs(new Blob(qrForm.data, { type: "image/png" }), "QRCode.png");
+      const image = await fetch(qrForm.data);
       toast.success("Downloading Started.");
+      saveAs(await image.blob(), `QR-Code-${Date.now()}.png`);
     }
   };
 
   return (
     <>
       <div className="text-center px-4 mt-8 mb-5 flex flex-col items-center justify-center bg-white rounded-md  py-6">
-        <h2 className="font-bold text-2xl">Online Robots.txt Generator</h2>
+        <h2 className="font-bold text-2xl">Online QR Code Generator</h2>
         <p className="text-sm text-gray-500  mt-1 max-w-xl">
-          Whether you want to generate Robots.txt for your website you can
-          simply use this tool to generate it.
+          Whether you want to generate QR Code for URL, VCard, Text, WIFI, Email
+          etc. you can simply use this tool to generate it.
         </p>
       </div>
       <section className="bg-white rounded-md p-8">
@@ -267,7 +268,7 @@ export default function QrCodeGenerator() {
                 <input
                   id="phone"
                   name="phone"
-                  type={"tel"}
+                  type="tel"
                   placeholder="eg: +12223334444"
                   className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
                 />
@@ -436,7 +437,7 @@ export default function QrCodeGenerator() {
                 <input
                   id="phone"
                   name="phone"
-                  type={"tel"}
+                  type="tel"
                   required
                   placeholder="eg: +91xxxxxxxxxx"
                   className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
@@ -472,7 +473,7 @@ export default function QrCodeGenerator() {
                   id="phone"
                   name="phone"
                   required
-                  type={"tel"}
+                  type="tel"
                   placeholder="eg: +91xxxxxxxxxx"
                   className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
                 />
@@ -484,14 +485,14 @@ export default function QrCodeGenerator() {
             <div>
               <label
                 htmlFor="imageSize"
-                className="font-medium mb-3 block text-sm text-gray-600">
+                className="font-medium mb-3 block text-base">
                 Image Size
               </label>
               <select
                 id="imageSize"
                 name="imageSize"
                 defaultValue="200"
-                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
                 <option value="50">50x50</option>
                 <option value="100">100x100</option>
                 <option value="150">150x150</option>
@@ -507,14 +508,14 @@ export default function QrCodeGenerator() {
             <div>
               <label
                 htmlFor="errorCorrectionLevel"
-                className="font-medium mb-3 block text-sm text-gray-600">
+                className="font-medium mb-3 block text-base">
                 Error Correction Level
               </label>
               <select
                 id="errorCorrectionLevel"
                 name="errorCorrectionLevel"
                 defaultValue="L"
-                className="w-full border border-gray-200 p-2 rounded-md text-sm outline-none">
+                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
                 <option value="L">Low (L)</option>
                 <option value="M">Medium (M)</option>
                 <option value="Q">Quartile (Q)</option>
@@ -550,11 +551,11 @@ export default function QrCodeGenerator() {
                 onClick={() => handleResult("download")}>
                 <RiDownloadLine /> <span>Download QR</span>
               </button>
-              <button
+              {/* <button
                 className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
                 onClick={() => handleResult("copy")}>
                 <RiFileCopyLine /> <span>Copy</span>
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -569,27 +570,32 @@ export default function QrCodeGenerator() {
       )}
       <section className="bg-white rounded-md p-4 mt-5">
         <h2 className="font-semibold mb-3 text-xl border-b border-gray-100  pb-3">
-          About Robots.txt Generator
+          About QR Code Generator
         </h2>
-        <div className="text-sm text-gray-500 font-light">
+        <div className="text-sm text-gray-500 font-light tracking-wide leading-6">
           <p>
-            Robots.txt Generator is one of smartest free online tool from Sharp
-            SEO Tools for generating Robots.txt for your website.
+            QR Code Generator is one of smartest free online tool from Sharp SEO
+            Tools for generating QR Codes.
           </p>
           <p className="mt-1">
-            Robots.txt is a file that can be placed in the root folder of your
-            website to help search engines index your site more appropriately.
-            Search engines such as Google use website crawlers, or robots that
-            review all the content on your website. There may be parts of your
-            website that you do not want them to crawl to include in user search
-            results, such as admin page. You can add these pages to the file to
-            be explicitly ignored.
+            QR code is the abbreviation for ‘Quick Response’ code. It is a
+            registered trademark of Denso Wave Incorporated. The QR code is a
+            two dimensional barcode that is readable by smart phones, tablets,
+            computers with webcams.
           </p>
-          <p className="mt-1">
-            Robots.txt files use something called the Robots Exclusion Protocol.
-            This website will easily generate the file for you with inputs of
-            pages to be excluded. And this small text file will help you to
-            improve your website SEO and increase the ranking in Search Engines.
+          <p className="mt-2">
+            Over 4000 characters can be encoded in a single QR code. Once a QR
+            code is generated it cannot be changed. If an attempt is made to
+            change the code it will result in a different code being produced,
+            and not the original one.
+          </p>
+          <p className="mt-2">
+            In the future it’s expected that QR codes will replace the
+            traditional bar codes on commercial items. There is no restriction
+            on using QR codes for personal or commercial use. You will need to
+            download the appropriate application to read QR codes on a smart
+            phone. The QR code reader application is available across all types
+            of smart phones.
           </p>
         </div>
       </section>

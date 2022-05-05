@@ -1028,6 +1028,26 @@ Ensure the default browser behavior of the `hidden` attribute.
   font-style: italic;
 }
 
+.leading-4{
+  line-height: 1rem;
+}
+
+.leading-10{
+  line-height: 2.5rem;
+}
+
+.leading-8{
+  line-height: 2rem;
+}
+
+.leading-6{
+  line-height: 1.5rem;
+}
+
+.leading-5{
+  line-height: 1.25rem;
+}
+
 .tracking-wide{
   letter-spacing: 0.025em;
 }
@@ -1240,6 +1260,7 @@ select::after {
 }
 
 .horizontal-tab{
+  overflow-y: hidden;
   overflow-x: scroll;
   border-bottom-width: 1px;
   --tw-border-opacity: 1;
