@@ -16,10 +16,13 @@
   @apply block;
 }
 .child-menu {
-  @apply absolute bg-white text-primary p-5 rounded-b-md shadow-lg space-y-5 shadow-black/5 min-w-[200px] hidden;
+  @apply absolute bg-white text-primary p-5 rounded-b-md shadow-lg space-y-5 shadow-black/5 min-w-[250px] hidden;
 }
 ul.child-menu > li {
-  @apply leading-none;
+  @apply transition-colors ease-linear duration-200 leading-6;
+}
+ul.child-menu > li:hover {
+  @apply text-black;
 }
 
 /* Sidebar */

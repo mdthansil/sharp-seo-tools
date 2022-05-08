@@ -11,6 +11,7 @@ import {
   RiArrowDownSLine,
   RiLoginCircleLine,
   RiMessage3Line,
+  RiBarChartLine,
 } from "react-icons/ri";
 export default function Header() {
   return (
@@ -52,21 +53,35 @@ export default function Header() {
             </a>
             <ul className="child-menu">
               <li>
-                <Link to={"/"} className="flex items-center space-x-2">
-                  <RiHashtag />
-                  <span>Cryptography</span>
+                <Link
+                  to={"/apps/meta-tags-generator"}
+                  className="flex items-center space-x-2">
+                  <RiBarChartLine />
+                  <span>Meta Tags Generator</span>
                 </Link>
               </li>
               <li>
-                <Link to={"/"} className="flex items-center space-x-2">
-                  <RiHashtag />
-                  <span>Cryptography</span>
+                <Link
+                  to={"/apps/open-graph-generator"}
+                  className="flex items-center space-x-2">
+                  <RiBarChartLine />
+                  <span>Open Graph Generator</span>
                 </Link>
               </li>
               <li>
-                <Link to={"/"} className="flex items-center space-x-2">
-                  <RiHashtag />
-                  <span>Cryptography</span>
+                <Link
+                  to={"/apps/twitter-card-generator"}
+                  className="flex items-center space-x-2">
+                  <RiBarChartLine />
+                  <span>Twitter Card Generator</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={"/apps/robots-text-generator"}
+                  className="flex items-center space-x-2">
+                  <RiBarChartLine />
+                  <span>Robots Text Generator</span>
                 </Link>
               </li>
             </ul>
