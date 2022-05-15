@@ -2,11 +2,12 @@ import { useFetcher } from "@remix-run/react";
 import React, { useEffect, useState } from "react";
 import {
   RiAddCircleFill,
-  RiDownloadLine,
+  RiFileCopyLine,
   RiIndeterminateCircleFill,
 } from "react-icons/ri";
 import copy from "copy-to-clipboard";
 import toast from "react-hot-toast";
+import { JWT } from "../../modules.server";
 
 export const meta = () => {
   return {
@@ -20,22 +21,41 @@ export const meta = () => {
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
-  console.log(formData);
-  return null;
+  const data = JSON.parse(await formData.get("data"));
+  const token = JWT.sign(data.payload, data.secret, {
+    algorithm: data.algorithm,
+    subject: data.subject,
+  });
+  console.log(token, "the token");
+  return token;
 };
 
-const initialValues = [
+const initialPayload = [
   {
     key: "",
     value: "",
   },
 ];
 
+const initialValues = {
+  algorithm: "HS256",
+  secret: "",
+  expiry: 60 * 1000 * 60,
+  subject: "",
+  payload: {},
+};
+
 export default function JwtTokenGenerator() {
   const jwtForm = useFetcher();
-  const [payload, setPayload] = useState(initialValues);
+  const [payload, setPayload] = useState(initialPayload);
+  const [values, setValues] = useState(initialValues);
+  const [result, setResult] = useState(null);
 
-  let handlePayload = (e, index) => {
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const handlePayload = (e, index) => {
     const _oldData = [...payload];
     _oldData[index][e.target.name] = e.target.value;
 
@@ -58,9 +78,27 @@ export default function JwtTokenGenerator() {
     setPayload(prevPayload);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const _values = { ...values };
+    _values.payload = payload.reduce(
+      (old, item) => ({ ...old, [item.key]: item.value }),
+      {}
+    );
+
+    jwtForm.submit({ data: JSON.stringify(_values) }, { method: "post" });
+  };
+
+  const handleResult = () => {
+    copy(result);
+    toast.success("Text Copied.");
+  };
+
   useEffect(() => {
-    console.log("from eff", payload);
-  }, [payload]);
+    if (jwtForm.data) {
+      setResult(jwtForm.data);
+    }
+  }, [jwtForm.data]);
 
   return (
     <>
@@ -75,7 +113,11 @@ export default function JwtTokenGenerator() {
         <div className="mb-5 border-b border-gray-100 flex justify-between items-center pb-3">
           <h2 className="font-semibold text-xl">Enter App Details</h2>
         </div>
-        <jwtForm.Form method="post" autoComplete="off" className="mt-5">
+        <jwtForm.Form
+          method="post"
+          autoComplete="off"
+          className="mt-5"
+          onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-5 mt-4">
             <div>
               <label
@@ -86,12 +128,13 @@ export default function JwtTokenGenerator() {
               <select
                 id="algorithm"
                 name="algorithm"
-                defaultValue="200"
+                value={values.algorithm}
+                onChange={handleChange}
                 className="w-full border border-gray-200 p-2 rounded-md text-base outline-none">
                 <option value="HS256">HS256</option>
                 <option value="HS384">HS384</option>
                 <option value="HS512">HS512</option>
-                <option value="RS256">RS256</option>
+                {/* <option value="RS256">RS256</option>
                 <option value="RS384">RS384</option>
                 <option value="RS512">RS512</option>
                 <option value="PS256">PS256</option>
@@ -100,7 +143,7 @@ export default function JwtTokenGenerator() {
                 <option value="ES256">ES256</option>
                 <option value="ES384">ES384</option>
                 <option value="ES512">ES512</option>
-                <option value="none">None</option>
+                <option value="none">None</option> */}
               </select>
             </div>
             <div>
@@ -114,20 +157,21 @@ export default function JwtTokenGenerator() {
                 name="secret"
                 placeholder="Secret Key"
                 required
+                onChange={handleChange}
                 className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
               />
             </div>
             <div>
               <label
-                htmlFor="expireIn"
+                htmlFor="expiry"
                 className="font-medium mb-3 block text-base ">
                 Expiry (In Seconds)
               </label>
               <input
-                id="expireIn"
-                name="expireIn"
+                id="expiry"
+                name="expiry"
                 placeholder="eg: 100"
-                required
+                onChange={handleChange}
                 className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
               />
             </div>
@@ -141,108 +185,102 @@ export default function JwtTokenGenerator() {
                 id="subject"
                 name="subject"
                 placeholder="eg: 123456789"
-                required
+                onChange={handleChange}
                 className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
-            <div className="grid gap-y-5 items-start">
-              <div className="mt-5 font-medium block text-base">
-                <h3>Payload</h3>
-              </div>
-              {payload.map((item, index) => {
-                return (
-                  <div className="flex items-center space-x-5" key={index}>
+          <div className="grid grid-cols-1 gap-5">
+            <div className="mt-5 font-medium text-base flex items-center justify-between -mb-2">
+              <h3>Payload (Key, Value)</h3>
+              <p className="text-xs italic text-gray-500">
+                This key, value data will convert to Json format.
+              </p>
+            </div>
+            {payload.map((item, index) => {
+              return (
+                <div className="grid grid-cols-2 gap-5 " key={index}>
+                  <input
+                    name="key"
+                    placeholder="Key"
+                    className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
+                    onChange={(e) => handlePayload(e, index)}
+                    value={payload[index].key}
+                  />
+                  <div className="flex items-center space-x-2 flex-shrink-0 flex-grow">
                     <input
-                      name="key"
-                      placeholder="Key"
-                      className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
+                      name="value"
+                      placeholder="Value"
+                      className="w-full  border border-gray-200 p-2 rounded-md text-base outline-none"
                       onChange={(e) => handlePayload(e, index)}
-                      value={payload[index].key}
+                      value={payload[index].value}
                     />
-                    <div className="flex items-center space-x-2 flex-shrink-0 flex-grow">
-                      <input
-                        name="value"
-                        placeholder="Value"
-                        className="w-full  border border-gray-200 p-2 rounded-md text-base outline-none"
-                        onChange={(e) => handlePayload(e, index)}
-                        value={payload[index].value}
-                      />
-                      {payload.length > 1 && index != payload.length - 1 ? (
-                        <button
-                          type="button"
-                          className="text-red-500"
-                          onClick={(e) => removePayload(e, index)}>
-                          <RiIndeterminateCircleFill fontSize={24} />
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className="text-green-500"
-                          onClick={addNewPayload}>
-                          <RiAddCircleFill fontSize={24} />
-                        </button>
-                      )}
-                    </div>
+                    {payload.length > 1 && index != payload.length - 1 ? (
+                      <button
+                        type="button"
+                        className="text-red-500"
+                        onClick={(e) => removePayload(e, index)}>
+                        <RiIndeterminateCircleFill fontSize={24} />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-green-500"
+                        onClick={addNewPayload}>
+                        <RiAddCircleFill fontSize={24} />
+                      </button>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-            <div>
-              <div className="mt-5 font-medium block text-base">
-                <h3>Payload Preview</h3>
-              </div>
-              <pre className="mt-5">
-                {JSON.stringify(
-                  payload.reduce(
-                    (old, item) => ({ ...old, [item.key]: item.value }),
-                    {}
-                  ),
-                  null,
-                  2
-                )}
-              </pre>
-            </div>
+                </div>
+              );
+            })}
           </div>
+
+          <div className="grid grid-cols-1 gap-5">
+            <div className="mt-5 font-medium text-base flex items-center justify-between -mb-2">
+              <h3>Payload Preview</h3>
+            </div>
+            <pre className=" border border-gray-100 bg-gray-50/50 p-4 font-normal rounded-md font-mono">
+              {JSON.stringify(
+                payload.reduce(
+                  (old, item) => ({ ...old, [item.key]: item.value }),
+                  {}
+                ),
+                null,
+                2
+              )}
+            </pre>
+          </div>
+
           <div className="flex justify-center space-x-3 mt-7">
-            <button
-              type="button"
-              onClick={() => {
-                jwtForm.submit({ name: "thasnil" }, { method: "post" });
-              }}>
-              sdlfkjsdf
+            <button className="bg-primary text-sm text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
+              Generate JWT Token
             </button>
           </div>
         </jwtForm.Form>
       </section>
 
-      {jwtForm.state == "submitting" ? (
-        <div className="text-center p-2">Preparing...</div>
-      ) : (
-        ""
-      )}
-
-      {jwtForm.data && jwtForm.state === "idle" && (
+      {jwtForm.data && jwtForm.state == "idle" && (
         <section className="bg-white rounded-md p-4 mt-5">
           <div className="mb-3 border-b border-gray-100 flex justify-between items-center pb-3">
             <h2 className="font-semibold text-xl">Results</h2>
             <div className="flex items-center space-x-2">
-              {/* <button
+              <button
                 className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
-                onClick={() => handleResult("copy")}>
+                onClick={handleResult}>
                 <RiFileCopyLine /> <span>Copy</span>
-              </button> */}
+              </button>
             </div>
           </div>
 
           <div className="flex items-center justify-center">
-            <img
-              src={jwtForm.data}
-              alt="QR Code"
-              className="border border-gray-100 rounded-md"
-            />
+            <textarea
+              readOnly
+              rows={4}
+              className="w-full p-2 resize-none border border-gray-100 rounded-md text-base outline-none"
+              onFocus={(e) => e.target.select()}
+              value={jwtForm.data || ""}></textarea>
           </div>
         </section>
       )}
@@ -250,7 +288,7 @@ export default function JwtTokenGenerator() {
         <h2 className="font-semibold mb-3 text-xl border-b border-gray-100  pb-3">
           About QR Code Generator
         </h2>
-        <div className="text-sm text-gray-500 font-light tracking-wide leading-6">
+        <div className="text-sm text-gray-500 font-light tracking-wide leading-5">
           <p>
             QR Code Generator is one of smartest free online tool from Sharp SEO
             Tools for generating QR Codes.
