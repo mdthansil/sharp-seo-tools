@@ -27,7 +27,8 @@
     "react-hot-toast": "^2.2.0",
     "react-icons": "^4.3.1",
     "sharp": "^0.30.4",
-    "underscore.string": "^3.3.6"
+    "underscore.string": "^3.3.6",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.5.1",

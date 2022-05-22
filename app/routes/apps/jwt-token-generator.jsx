@@ -174,7 +174,7 @@ export default function JwtTokenGenerator() {
                 placeholder="eg: 3600 "
                 onChange={handleChange}
                 min={0}
-                className="w-full border native-appearance-none border-gray-200 p-2 rounded-md text-base outline-none"
+                className="w-full border input-number-appearance-none border-gray-200 p-2 rounded-md text-base outline-none"
               />
             </div>
             <div>

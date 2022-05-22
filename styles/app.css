@@ -4,8 +4,8 @@
 @tailwind utilities;
 
 /* Global */
-input[type="number"].native-appearance-none::-webkit-inner-spin-button,
-input[type="number"].native-appearance-none::-webkit-outer-spin-button {
+input[type="number"].input-number-appearance-none::-webkit-inner-spin-button,
+input[type="number"].input-number-appearance-none::-webkit-outer-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
