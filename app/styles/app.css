@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&display=swap");
 
 /*
-! tailwindcss v3.0.23 | MIT License | https://tailwindcss.com
+! tailwindcss v3.0.24 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -805,10 +805,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   border-width: 1px;
 }
 
-.border-0{
-  border-width: 0px;
-}
-
 .border-b{
   border-bottom-width: 1px;
 }
@@ -1044,16 +1040,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   font-style: italic;
 }
 
-.leading-6{
-  line-height: 1.5rem;
-}
-
 .leading-5{
   line-height: 1.25rem;
 }
 
-.leading-4{
-  line-height: 1rem;
+.leading-6{
+  line-height: 1.5rem;
 }
 
 .tracking-wide{
@@ -1140,6 +1132,14 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 
 /* Global */
+
+input[type="number"].native-appearance-none::-webkit-inner-spin-button,
+input[type="number"].native-appearance-none::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
 
 /* Header */
 

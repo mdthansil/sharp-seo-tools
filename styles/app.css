@@ -4,6 +4,13 @@
 @tailwind utilities;
 
 /* Global */
+input[type="number"].native-appearance-none::-webkit-inner-spin-button,
+input[type="number"].native-appearance-none::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
 
 /* Header */
 .nav-menu > ul > li {

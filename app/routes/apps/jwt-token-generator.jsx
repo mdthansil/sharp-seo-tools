@@ -25,8 +25,8 @@ export const action = async ({ request }) => {
   const token = JWT.sign(data.payload, data.secret, {
     algorithm: data.algorithm,
     subject: data.subject,
+    expiresIn: parseInt(data.expiry),
   });
-  console.log(token, "the token");
   return token;
 };
 
@@ -40,7 +40,7 @@ const initialPayload = [
 const initialValues = {
   algorithm: "HS256",
   secret: "",
-  expiry: 60 * 1000 * 60,
+  expiry: 60 * 60 * 24,
   subject: "",
   payload: {},
 };
@@ -170,9 +170,11 @@ export default function JwtTokenGenerator() {
               <input
                 id="expiry"
                 name="expiry"
-                placeholder="eg: 100"
+                type={"number"}
+                placeholder="eg: 3600 "
                 onChange={handleChange}
-                className="w-full border border-gray-200 p-2 rounded-md text-base outline-none"
+                min={0}
+                className="w-full border native-appearance-none border-gray-200 p-2 rounded-md text-base outline-none"
               />
             </div>
             <div>
