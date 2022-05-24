@@ -4,7 +4,7 @@ import { RiDownloadLine, RiFileCopyLine } from "react-icons/ri";
 import { v1 as uuid1, v4 as uuid4 } from "uuid";
 import copy from "copy-to-clipboard";
 import toast from "react-hot-toast";
-import BCrypt from "bcryptjs";
+import { BCrypt } from "../../modules.server";
 
 export const meta = () => {
   return {
@@ -16,10 +16,28 @@ export const meta = () => {
   };
 };
 
+const actions = {
+  generateHash: "hash",
+  validateHash: "verify",
+};
+
 export const action = async ({ request }) => {
-  // const _salt = await BCrypt.genSalt(20);
-  // const _hash = await BCrypt.hash("hello world", _salt);
-  // console.log(_hash);
+  const form = await request.formData();
+  const formData = Object.fromEntries(form);
+
+  if (formData?.action == actions.generateHash) {
+    const { rounds, plainText } = formData;
+    const _salt = await BCrypt.genSalt(parseInt(rounds));
+    const _hash = await BCrypt.hash(plainText, _salt);
+    return _hash;
+  }
+
+  if (formData?.action == actions.validateHash) {
+    const { hashToVerify, textToVerify } = formData;
+    const _valid = await BCrypt.compare(textToVerify, hashToVerify);
+    return _valid;
+  }
+
   return null;
 };
 
@@ -31,7 +49,8 @@ const initialValues = {
 };
 
 export default function BCryptGenerator() {
-  const formFetcher = useFetcher();
+  const generatorForm = useFetcher();
+  const validatorForm = useFetcher();
 
   const [values, setValues] = useState(initialValues);
   const [result, setResult] = useState("");
@@ -42,15 +61,15 @@ export default function BCryptGenerator() {
 
   const generateHash = async (e) => {
     // console.log(values);
-    // e.preventDefault();
-    // const _salt = await BCrypt.genSalt(parseInt(values.rounds));
-    // const _hash = await BCrypt.hash(values.plainText, _salt);
-    // setResult(_hash);
-    // BCrypt.hash(values.plainText, values.rounds, (err, hash) => {
-    //   if (!err) {
-    //     setResult(hash);
-    //   }
-    // });
+    e.preventDefault();
+    const _salt = await BCrypt.genSalt(parseInt(values.rounds));
+    const _hash = await BCrypt.hash(values.plainText, _salt);
+    setResult(_hash);
+    BCrypt.hash(values.plainText, values.rounds, (err, hash) => {
+      if (!err) {
+        setResult(hash);
+      }
+    });
   };
 
   const verifyHash = async (e) => {
@@ -87,11 +106,7 @@ export default function BCryptGenerator() {
             </div>
           )}
         </div>
-        <Form
-          method="post"
-          autoComplete="off"
-          className="mt-5"
-          onSubmit={generateHash}>
+        <generatorForm.Form method="post" autoComplete="off" className="mt-5">
           <div className="grid grid-cols-2 gap-5">
             <div>
               <div>
@@ -143,7 +158,7 @@ export default function BCryptGenerator() {
                   name="results"
                   placeholder="Generated Hash."
                   readOnly
-                  value={result}
+                  value={generatorForm.data || ""}
                   onFocus={(e) => e.target.select()}
                   className="w-full flex-grow self-stretch border border-gray-300 p-2 rounded-md  text-base outline-none"></textarea>
               </div>
@@ -151,11 +166,17 @@ export default function BCryptGenerator() {
           </div>
 
           <div className="flex justify-center space-x-3 mt-7">
-            <button className="bg-primary text-sm text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
-              Generate Hash
+            <button
+              name="action"
+              value={"hash"}
+              disabled={generatorForm.state == "submitting"}
+              className="bg-primary text-sm text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
+              {generatorForm.state == "submitting"
+                ? "Generating Hash..."
+                : "Generate Hash"}
             </button>
           </div>
-        </Form>
+        </generatorForm.Form>
       </section>
 
       <section className="bg-white rounded-md p-8 mt-5">
