@@ -35,6 +35,7 @@ export const action = async ({ request }) => {
   if (formData?.action == actions.validateHash) {
     const { hashToVerify, textToVerify } = formData;
     const _valid = await BCrypt.compare(textToVerify, hashToVerify);
+    console.log(_valid, "ldksjflsdkfjlskd");
     return _valid;
   }
 
@@ -49,27 +50,13 @@ const initialValues = {
 };
 
 export default function BCryptGenerator() {
+  const compareForm = useFetcher();
   const generatorForm = useFetcher();
-  const validatorForm = useFetcher();
 
   const [values, setValues] = useState(initialValues);
-  const [result, setResult] = useState("");
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
-  };
-
-  const generateHash = async (e) => {
-    // console.log(values);
-    e.preventDefault();
-    const _salt = await BCrypt.genSalt(parseInt(values.rounds));
-    const _hash = await BCrypt.hash(values.plainText, _salt);
-    setResult(_hash);
-    BCrypt.hash(values.plainText, values.rounds, (err, hash) => {
-      if (!err) {
-        setResult(hash);
-      }
-    });
   };
 
   const verifyHash = async (e) => {
@@ -78,7 +65,7 @@ export default function BCryptGenerator() {
 
   const handleResult = (action) => {
     if (action === "copy") {
-      if (copy(result)) {
+      if (copy(generatorForm.data)) {
         toast.success("Text Copied.");
       }
     }
@@ -96,7 +83,7 @@ export default function BCryptGenerator() {
       <section className="bg-white rounded-md p-8">
         <div className="mb-5 border-b border-gray-200 flex justify-between items-center pb-3">
           <h2 className="font-semibold text-xl">Generator</h2>
-          {result !== "" && (
+          {generatorForm.data !== "" && (
             <div className="flex items-center space-x-2">
               <button
                 className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
@@ -182,90 +169,72 @@ export default function BCryptGenerator() {
       <section className="bg-white rounded-md p-8 mt-5">
         <div className="mb-5 border-b border-gray-200 flex justify-between items-center pb-3">
           <h2 className="font-semibold text-xl">Hash Verifier</h2>
-          {result !== "" && (
-            <div className="flex items-center space-x-2">
-              <button
-                className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
-                onClick={() => handleResult("download")}>
-                <RiDownloadLine /> <span>Download</span>
-              </button>
-              <button
-                className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
-                onClick={() => handleResult("copy")}>
-                <RiFileCopyLine /> <span>Copy</span>
-              </button>
-            </div>
-          )}
         </div>
-        <Form
+        <compareForm.Form
           method="post"
           autoComplete="off"
           className="mt-5"
           onSubmit={verifyHash}>
           <div className="grid grid-cols-2 gap-5">
-            <div>
-              <div>
-                <label
-                  htmlFor="uuidCount"
-                  className="font-medium mb-3 block text-base">
-                  Number of UUIDs to generate
-                </label>
-                <input
-                  id="uuidCount"
-                  name="uuidCount"
-                  placeholder="UUID Count"
-                  onChange={handleChange}
-                  type={"number"}
-                  value={values.uuidCount}
-                  min={1}
-                  max={100}
-                  className="w-full border border-gray-300 p-2 rounded-md text-base outline-none"></input>
-                <p className="text-xs italic text-gray-500 mt-1">
-                  Number between 1 and 100
-                </p>
-              </div>
-              <div className="mt-4">
-                <label
-                  htmlFor="uuidVersion"
-                  className="font-medium mb-3 block text-base">
-                  UUID Version
-                </label>
-                <select
-                  id="uuidVersion"
-                  name="uuidVersion"
-                  value={values.uuidVersion}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 p-2 rounded-md text-base outline-none">
-                  <option value="1">Version-1</option>
-                  <option value="4">Version-4</option>
-                </select>
-              </div>
+            <div className="h-full flex flex-col">
+              <label
+                htmlFor="hashToVerify"
+                className="font-medium mb-3 block text-base">
+                Hash Text
+              </label>
+              <textarea
+                required
+                id="hashToVerify"
+                name="hashToVerify"
+                placeholder="Hash to Verify"
+                value={values.hashToVerify}
+                onChange={handleChange}
+                className="w-full flex-grow self-stretch border border-gray-300 p-2 rounded-md  text-base outline-none"
+                rows={3}></textarea>
             </div>
-            <div>
-              <div className="h-full flex flex-col">
-                <label
-                  htmlFor="results"
-                  className="font-medium mb-3 block text-base">
-                  Results:
-                </label>
-                <textarea
-                  id="results"
-                  name="results"
-                  placeholder="Generated Results."
-                  readOnly
-                  value={result}
-                  onFocus={(e) => e.target.select()}
-                  className="w-full flex-grow self-stretch border border-gray-300 p-2 rounded-md  text-base outline-none"></textarea>
-              </div>
+
+            <div className="h-full flex flex-col">
+              <label
+                htmlFor="textToVerify"
+                className="font-medium mb-3 block text-base">
+                Plain Text
+              </label>
+              <textarea
+                required
+                id="textToVerify"
+                name="textToVerify"
+                placeholder="Text to Verify"
+                value={values.textToVerify}
+                onChange={handleChange}
+                className="w-full flex-grow self-stretch border border-gray-300 p-2 rounded-md  text-base outline-none"
+                rows={3}></textarea>
             </div>
           </div>
 
+          {console.log(compareForm.data, "sdfsdf")}
+
+          {typeof compareForm.data !== "undefined" && (
+            <div
+              className={`border text-sm tracking-wide py-3 px-2 rounded-md text-center mt-5 ${
+                compareForm.data == true
+                  ? "border-green-300 bg-green-100 text-green-500"
+                  : "border-red-300 bg-red-100 text-red-500"
+              }`}>
+              {compareForm.data == true ? "Match!" : "Not Matching!"}
+            </div>
+          )}
+
           <div className="flex justify-center space-x-3 mt-7">
-            <button className="bg-primary text-sm text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
-              Verify Hash
+            <button
+              name="action"
+              value={"verify"}
+              className="bg-primary text-sm text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
+              {compareForm.state == "submitting"
+                ? "Verifying hash..."
+                : "Verify Hash"}
             </button>
           </div>
-        </Form>
+        </compareForm.Form>
       </section>
 
       <section className="bg-white rounded-md p-4 mt-5">
