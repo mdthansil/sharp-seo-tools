@@ -1,5 +1,5 @@
 import { Form, useFetcher } from "@remix-run/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDownloadLine, RiFileCopyLine } from "react-icons/ri";
 import { v1 as uuid1, v4 as uuid4 } from "uuid";
 import copy from "copy-to-clipboard";
@@ -35,7 +35,6 @@ export const action = async ({ request }) => {
   if (formData?.action == actions.validateHash) {
     const { hashToVerify, textToVerify } = formData;
     const _valid = await BCrypt.compare(textToVerify, hashToVerify);
-    console.log(_valid, "ldksjflsdkfjlskd");
     return _valid;
   }
 
@@ -59,10 +58,6 @@ export default function BCryptGenerator() {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const verifyHash = async (e) => {
-    e.preventDefault();
-  };
-
   const handleResult = (action) => {
     if (action === "copy") {
       if (copy(generatorForm.data)) {
@@ -83,7 +78,7 @@ export default function BCryptGenerator() {
       <section className="bg-white rounded-md p-8">
         <div className="mb-5 border-b border-gray-200 flex justify-between items-center pb-3">
           <h2 className="font-semibold text-xl">Generator</h2>
-          {generatorForm.data !== "" && (
+          {typeof generatorForm.data !== "undefined" && (
             <div className="flex items-center space-x-2">
               <button
                 className="border border-primary/80 text-primary/80 hover:bg-gray-100 flex space-x-1 items-center rounded-md py-1 px-2 uppercase text-sm font-medium tracking-wide"
@@ -156,7 +151,7 @@ export default function BCryptGenerator() {
             <button
               name="action"
               value={"hash"}
-              disabled={generatorForm.state == "submitting"}
+              disabled={generatorForm.state === "submitting"}
               className="bg-primary text-sm text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
               {generatorForm.state == "submitting"
                 ? "Generating Hash..."
@@ -170,11 +165,7 @@ export default function BCryptGenerator() {
         <div className="mb-5 border-b border-gray-200 flex justify-between items-center pb-3">
           <h2 className="font-semibold text-xl">Hash Verifier</h2>
         </div>
-        <compareForm.Form
-          method="post"
-          autoComplete="off"
-          className="mt-5"
-          onSubmit={verifyHash}>
+        <compareForm.Form method="post" autoComplete="off" className="mt-5">
           <div className="grid grid-cols-2 gap-5">
             <div className="h-full flex flex-col">
               <label
@@ -211,8 +202,6 @@ export default function BCryptGenerator() {
             </div>
           </div>
 
-          {console.log(compareForm.data, "sdfsdf")}
-
           {typeof compareForm.data !== "undefined" && (
             <div
               className={`border text-sm tracking-wide py-3 px-2 rounded-md text-center mt-5 ${
@@ -228,6 +217,7 @@ export default function BCryptGenerator() {
             <button
               name="action"
               value={"verify"}
+              disabled={compareForm.state === "submitting"}
               className="bg-primary text-sm text-white px-5 py-2 block rounded-md hover:bg-opacity-90">
               {compareForm.state == "submitting"
                 ? "Verifying hash..."
