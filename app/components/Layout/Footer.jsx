@@ -25,7 +25,7 @@ export default function Footer() {
       </div>
       <div className="text-center py-3 text-sm tracking-wide">
         <p>
-          &copy; {year == "2022" ? `2022` : `2022 - ${year}`} Sharp Seo Tools | built with ♥ by <a href="https://thansil.com">Muhammed Thansil</a>
+          &copy; {year == "2022" ? `2022` : `2022 - ${year}`} Sharp Seo Tools | built with ♥ by <a href="https://thansil.com" target="_blank">Muhammed Thansil</a>
         </p>
       </div>
     </div>
